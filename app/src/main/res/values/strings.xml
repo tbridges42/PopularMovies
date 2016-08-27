@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="error_loading_image">There was an error loading this image</string>
+    <string-array name="sort_modes">
+        <item>Most Popular</item>
+        <item>Highest Rated</item>
+    </string-array>
+</resources>

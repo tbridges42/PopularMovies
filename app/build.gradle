@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        applicationId "us.bridgeses.popularmovies"
+        minSdkVersion 17
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            Properties properties = new Properties()
+            properties.load(file('local.properties').newDataInputStream())
+            def api_key = properties.getProperty('imdb.key')
+            resValue "string", "imdb_api_key", api_key
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            Properties properties = new Properties()
+            properties.load(file('local.properties').newDataInputStream())
+            def api_key = properties.getProperty('imdb.key')
+            resValue "string", "imdb_api_key", api_key
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:recyclerview-v7:23.3.0'
+    compile 'us.bridgeses:dateview:1.0.1'
+}

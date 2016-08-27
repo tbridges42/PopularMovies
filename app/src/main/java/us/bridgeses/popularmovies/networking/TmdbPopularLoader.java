@@ -23,6 +23,7 @@ import java.util.List;
 import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
+import us.bridgeses.popularmovies.models.Trailer;
 
 /**
  * Created by Tony on 8/7/2016.
@@ -81,76 +82,21 @@ public class TmdbPopularLoader implements PopularLoader {
         this.context = context;
     }
 
-    private static class UrlDetailFetcher extends AsyncTask<String, Void, MovieDetail> {
+    private static class UrlDetailFetcher extends AsyncUrlTask<MovieDetail> {
 
-        @UrlError int urlError = OK;
         private DetailsLoaderCallback callback;
-        private Context context;
 
         public UrlDetailFetcher(DetailsLoaderCallback callback, Context context) {
+            super(context);
             this.callback = callback;
-            this.context = context;
-        }
-
-        @Override
-        protected MovieDetail doInBackground(String... params) {
-            Log.d("url", params[0]);
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                try {
-                    URL url = new URL(params[0]);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
-                    // Starts the query
-                    conn.connect();
-                    int response = conn.getResponseCode();
-                    Log.d("response", Integer.toString(response));
-                    if (response == HttpURLConnection.HTTP_OK) {
-                        InputStream is = conn.getInputStream();
-                        return readDetails(is);
-                    }
-                }
-                catch (IOException e) {
-                    urlError = SERVER_ERROR;
-                }
-            } else {
-                urlError = CONNECTIVITY_ERROR;
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(MovieDetail results) {
-            Log.d(TAG, "onPostExecute: Returning with posters");
-            switch (urlError) {
-                case OK:
-                    if (results != null) {
-                        callback.onReturnDetails(results);
-                    }
-                    else {
-                        Log.d(TAG, "onPostExecute: No results returned");
-                    }
-                    break;
-                case CONNECTIVITY_ERROR:
-                    callback.onLocalFailure();
-                    break;
-                case SERVER_ERROR:
-                    callback.onRemoteFailure();
-                    break;
-            }
         }
 
         public JsonReader readIt(InputStream stream) throws IOException {
             return new JsonReader(new InputStreamReader(stream, "UTF-8"));
         }
 
-        public MovieDetail readDetails(InputStream is) throws IOException {
+        @Override
+        public MovieDetail readJson(InputStream is) throws IOException {
             JsonReader reader = readIt(is);
             String title = "";
             Uri posterPath = null;
@@ -192,78 +138,37 @@ public class TmdbPopularLoader implements PopularLoader {
             }
             return new MovieDetail(title, cal, new Poster(posterPath, title, 0L), rating, synopsis);
         }
+
+        @Override
+        public void handleSuccess(MovieDetail result) {
+            callback.onReturnDetails(result);
+        }
+
+        @Override
+        public void handleConnectionError() {
+            callback.onLocalFailure();
+        }
+
+        @Override
+        public void handleRemoteError() {
+            callback.onRemoteFailure();
+        }
     }
 
-    private static class UrlPosterFetcher extends AsyncTask<String, Void, List<Poster>> {
+    private static class UrlPosterFetcher extends AsyncUrlTask<List<Poster>> {
 
-        @UrlError int urlError = OK;
         private PosterLoaderCallback callback;
-        private Context context;
 
         public UrlPosterFetcher(PosterLoaderCallback callback, Context context) {
+            super(context);
             this.callback = callback;
-            this.context = context;
-        }
-
-        @Override
-        protected List<Poster> doInBackground(String... params) {
-            Log.d("url", params[0]);
-            ConnectivityManager connMgr = (ConnectivityManager)
-                    context.getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-            if (networkInfo != null && networkInfo.isConnected()) {
-                try {
-                    URL url = new URL(params[0]);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
-                    // Starts the query
-                    conn.connect();
-                    int response = conn.getResponseCode();
-                    Log.d("response", Integer.toString(response));
-                    if (response == HttpURLConnection.HTTP_OK) {
-                        InputStream is = conn.getInputStream();
-                        return readPosters(is);
-                    }
-                }
-                catch (IOException e) {
-                    urlError = SERVER_ERROR;
-                }
-            } else {
-                urlError = CONNECTIVITY_ERROR;
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Poster> results) {
-            Log.d(TAG, "onPostExecute: Returning with posters");
-            switch (urlError) {
-                case OK:
-                    if (results != null && results.size() >= 0) {
-                        callback.onReturnPosters(results);
-                    }
-                    else {
-                        Log.d(TAG, "onPostExecute: No results returned");
-                    }
-                    break;
-                case CONNECTIVITY_ERROR:
-                    callback.onLocalFailure();
-                    break;
-                case SERVER_ERROR:
-                    callback.onRemoteFailure();
-                    break;
-            }
         }
 
         public JsonReader readIt(InputStream stream) throws IOException {
             return new JsonReader(new InputStreamReader(stream, "UTF-8"));
         }
 
-        public List<Poster> readPosters(InputStream is) throws IOException{
+        public List<Poster> readJson(InputStream is) throws IOException{
             // Convert the InputStream into a string
             JsonReader reader = readIt(is);
             List<Poster> posters = new ArrayList<>();
@@ -310,6 +215,45 @@ public class TmdbPopularLoader implements PopularLoader {
             }
             reader.endObject();
             return new Poster(path, text, id);
+        }
+
+        public void handleSuccess(List<Poster> results) {
+            callback.onReturnPosters(results);
+        }
+
+        public void handleConnectionError() {
+            callback.onLocalFailure();
+        }
+
+        public void handleRemoteError() {
+            callback.onRemoteFailure();
+        }
+    }
+
+    private static class UrlTrailerFetcher extends AsyncUrlTask<List<Trailer>> {
+
+        public UrlTrailerFetcher(Context context) {
+            super(context);
+        }
+
+        @Override
+        public List<Trailer> readJson(InputStream is) throws IOException {
+            return null;
+        }
+
+        @Override
+        public void handleSuccess(List<Trailer> result) {
+
+        }
+
+        @Override
+        public void handleConnectionError() {
+
+        }
+
+        @Override
+        public void handleRemoteError() {
+
         }
     }
 }

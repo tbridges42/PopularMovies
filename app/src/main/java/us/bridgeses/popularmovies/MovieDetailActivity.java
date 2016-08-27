@@ -10,14 +10,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import us.bridgeses.dateview.DateView;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.MovieDetailPresenter;
-import us.bridgeses.popularmovies.presenters.PosterActivityPresenter;
 
 /**
  * Created by Tony on 8/25/2016.

@@ -161,6 +161,7 @@ public class TmdbPopularLoader implements PopularLoader {
             reader.beginObject();
             while (reader.hasNext()) {
                 name = reader.nextName();
+                Log.d(TAG, "readDetails: " + name);
                 switch (name) {
                     case "original_title":
                         title = reader.nextString();
@@ -176,6 +177,7 @@ public class TmdbPopularLoader implements PopularLoader {
                         break;
                     case "overview":
                         synopsis = reader.nextString();
+                        break;
                     default:
                         reader.skipValue();
                 }

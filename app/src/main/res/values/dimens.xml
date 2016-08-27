@@ -5,4 +5,7 @@
     <dimen name="vertical_spacing">4dp</dimen>
     <dimen name="horizontal_spacing">4dp</dimen>
     <dimen name="checkbox_size">15dp</dimen>
+    <dimen name="title_size">24sp</dimen>
+    <dimen name="subheading_size">16sp</dimen>
+    <dimen name="text_padding">15dp</dimen>
 </resources>

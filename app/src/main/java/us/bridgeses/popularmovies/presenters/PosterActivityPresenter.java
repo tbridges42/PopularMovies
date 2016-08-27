@@ -2,6 +2,7 @@ package us.bridgeses.popularmovies.presenters;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import us.bridgeses.popularmovies.MovieDetailActivity;
+import us.bridgeses.popularmovies.PosterActivity;
 import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.adapters.ListAdapterFactory;
 import us.bridgeses.popularmovies.adapters.PosterRecyclerAdapter;
@@ -152,7 +155,9 @@ public class PosterActivityPresenter extends Fragment implements PosterLoaderCal
 
     @Override
     public void onItemClick(long id) {
-        Toast.makeText(getActivity(), Long.toString(id),Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
     }
 
     @Override
@@ -163,8 +168,10 @@ public class PosterActivityPresenter extends Fragment implements PosterLoaderCal
                     currSort = 0;
                     if (popularLoader != null) {
                         Log.d(TAG, "refresh: Getting posters");
+                        page = 1;
                         popularLoader.getPosters(this, PopularLoader.MOST_POPULAR_MODE, page);
                         listAdapter = null;
+                        page = 0;
                     }
                 }
                 break;
@@ -173,6 +180,7 @@ public class PosterActivityPresenter extends Fragment implements PosterLoaderCal
                     currSort = 1;
                     if (popularLoader != null) {
                         Log.d(TAG, "refresh: Getting posters");
+                        page = 1;
                         popularLoader.getPosters(this, PopularLoader.TOP_RATED_MODE, page);
                         listAdapter = null;
                     }

@@ -105,7 +105,7 @@ public class TmdbPopularLoader implements PopularLoader {
             String synopsis = "";
             String name;
             reader.beginObject();
-            while (reader.hasNext()) {
+            while (reader.hasNext() && !isCancelled()) {
                 name = reader.nextName();
                 Log.d(TAG, "readDetails: " + name);
                 switch (name) {
@@ -174,11 +174,11 @@ public class TmdbPopularLoader implements PopularLoader {
             List<Poster> posters = new ArrayList<>();
             reader.beginObject();
             String name;
-            while (reader.hasNext()) {
+            while (reader.hasNext() && !isCancelled()) {
                 name = reader.nextName();
                 if (name.equals("results")) {
                     reader.beginArray();
-                    while (reader.hasNext()) {
+                    while (reader.hasNext() && !isCancelled()) {
                         posters.add(readPoster(reader));
                     }
                     reader.endArray();
@@ -232,28 +232,73 @@ public class TmdbPopularLoader implements PopularLoader {
 
     private static class UrlTrailerFetcher extends AsyncUrlTask<List<Trailer>> {
 
-        public UrlTrailerFetcher(Context context) {
+        TrailerLoaderCallback callback;
+
+        public UrlTrailerFetcher(Context context, TrailerLoaderCallback callback) {
             super(context);
+            this.callback = callback;
         }
 
         @Override
         public List<Trailer> readJson(InputStream is) throws IOException {
-            return null;
+            List<Trailer> trailers = new ArrayList<>();
+            JsonReader reader = new JsonReader(new InputStreamReader(is, "UTF-8"));
+            reader.beginObject();
+            String name;
+            while (reader.hasNext()) {
+                name = reader.nextName();
+                if (name.equals("results")) {
+                    reader.beginArray();
+                    while (reader.hasNext()) {
+                        trailers.add(readTrailer(reader));
+                    }
+                    reader.endArray();
+                }
+                else {
+                    reader.skipValue();
+                }
+            }
+            return trailers;
+        }
+
+        public Trailer readTrailer(JsonReader reader) throws IOException {
+            Trailer trailer = new Trailer();
+            reader.beginObject();
+            String name;
+            while (reader.hasNext()) {
+                name = reader.nextName();
+                switch(name) {
+                    case "key":
+                        String key = reader.nextString();
+                        trailer.setVideo_path(Uri.parse("https://www.youtube.com/watch?v=" + key));
+                        trailer.setThumbnail_path(Uri.parse("https://img.youtube.com/vi/" + key
+                                + "mqdefault.jpg"));
+                        break;
+                    case "name":
+                        trailer.setTitle(reader.nextString());
+                        break;
+                    default:
+                        reader.skipValue();
+                        break;
+                }
+            }
+            reader.endObject();
+            return trailer;
         }
 
         @Override
         public void handleSuccess(List<Trailer> result) {
-
+            callback.onReturnTrailers(result);
         }
 
         @Override
         public void handleConnectionError() {
-
+            callback.onLocalFailure();
         }
 
         @Override
         public void handleRemoteError() {
-
+            callback.onRemoteFailure();
         }
     }
 }

@@ -89,6 +89,13 @@ public abstract class AsyncUrlTask<A> extends AsyncTask<String, Void, A> {
         }
     }
 
+    @Override
+    protected void onCancelled(A results) {
+        if (results != null) {
+            handleSuccess(results);
+        }
+    }
+
     public abstract A readJson(InputStream is) throws IOException;
 
     public abstract void handleSuccess(A result);

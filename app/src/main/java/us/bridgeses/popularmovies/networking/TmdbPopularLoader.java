@@ -1,10 +1,7 @@
 package us.bridgeses.popularmovies.networking;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
@@ -13,8 +10,6 @@ import android.util.Log;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +32,7 @@ public class TmdbPopularLoader implements PopularLoader {
     public static final String TOP_RATED_URL = "top_rated";
     public static final String API_KEY = "?api_key=";
     public static final String PAGE = "&page=";
+    public static final String VIDEOS = "/videos";
     public static final int MAX_PAGE = 1000;
 
     @Override
@@ -64,17 +60,17 @@ public class TmdbPopularLoader implements PopularLoader {
         API_KEY + context.getResources().getString(R.string.imdb_api_key));
     }
 
+    public void getTrailers(@NonNull TrailerLoaderCallback callback, long id) {
+        new UrlTrailerFetcher(context, callback).execute(
+                BASE_URL + Long.toString(id) + VIDEOS + API_KEY
+                        + context.getResources().getString(R.string.imdb_api_key)
+        );
+    }
+
     @Override
     public void cancel() {
 
     }
-
-    @IntDef({OK, CONNECTIVITY_ERROR, SERVER_ERROR})
-    @interface UrlError {}
-
-    public static final int OK = 0;
-    public static final int CONNECTIVITY_ERROR = 1;
-    public static final int SERVER_ERROR = 2;
 
     private Context context;
 
@@ -272,7 +268,9 @@ public class TmdbPopularLoader implements PopularLoader {
                         String key = reader.nextString();
                         trailer.setVideo_path(Uri.parse("https://www.youtube.com/watch?v=" + key));
                         trailer.setThumbnail_path(Uri.parse("https://img.youtube.com/vi/" + key
-                                + "mqdefault.jpg"));
+                                + "/hqdefault.jpg"));
+                        Log.d(TAG, "readTrailer: " + trailer.getVideo_path());
+                        Log.d(TAG, "readTrailer: " + trailer.getThumbnail_path());
                         break;
                     case "name":
                         trailer.setTitle(reader.nextString());

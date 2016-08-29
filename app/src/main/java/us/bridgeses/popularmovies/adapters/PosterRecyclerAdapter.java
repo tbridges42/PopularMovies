@@ -1,9 +1,7 @@
 package us.bridgeses.popularmovies.adapters;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +47,6 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
     public void onBindViewHolder(PosterHolder holder, int position) {
         holder.imageView.setContentDescription(posters.get(position).getContentDescription());
         Picasso picasso = Picasso.with(context);
-        picasso.setIndicatorsEnabled(true);
         picasso.load(posters.get(position).getImageUri()).placeholder(R.drawable.loading).into(holder.imageView);
     }
 

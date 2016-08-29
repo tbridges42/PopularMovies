@@ -2,8 +2,11 @@ package us.bridgeses.popularmovies.presenters;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
+import android.support.v4.app.ShareCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,20 +14,28 @@ import android.view.ViewGroup;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import us.bridgeses.popularmovies.MovieDetailActivity;
+import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
+import us.bridgeses.popularmovies.models.Trailer;
 import us.bridgeses.popularmovies.networking.DetailsLoaderCallback;
 import us.bridgeses.popularmovies.networking.PopularLoader;
+import us.bridgeses.popularmovies.networking.TrailerLoaderCallback;
 
 /**
  * Created by Tony on 8/27/2016.
  */
-public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallback {
+public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallback,
+        TrailerLoaderCallback, TrailerAdapter.TrailerClickCallback {
 
     private static final String TAG = "MovieDetailPresenter";
 
     private PopularLoader popularLoader;
+    private MovieDetail movieDetail;
+    private Trailer firstTrailer;
+    private Intent shareIntent;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,12 +81,14 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
     public void loadDetail(long id) {
         if (popularLoader != null) {
             popularLoader.getDetails(this, id);
+            popularLoader.getTrailers(this, id);
         }
     }
 
     @Override
     public void onReturnDetails(MovieDetail detail) {
-        ((MovieDetailActivity)getActivity()).setMovieDetail(detail);
+        this.movieDetail = detail;
+        ((MovieDetailActivity) getActivity()).setMovieDetail(detail);
     }
 
     @Override
@@ -86,5 +99,38 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
     @Override
     public void onRemoteFailure() {
 
+    }
+
+    @Override
+    public void onReturnTrailers(List<Trailer> trailers) {
+        firstTrailer = trailers.get(0);
+        Log.d(TAG, "onReturnTrailers: setting adapter with size " + trailers.size());
+        TrailerAdapter adapter = new TrailerAdapter(getActivity(), trailers);
+        adapter.setCallback(this);
+        MovieDetailActivity activity = ((MovieDetailActivity) getActivity());
+        activity.setAdapter(adapter);
+        updateShareIntent();
+    }
+
+    @Override
+    public void onTrailerClick(Uri trailerUri) {
+        Intent intent = new Intent(Intent.ACTION_VIEW, trailerUri);
+        startActivity(intent);
+    }
+
+    public void updateShareIntent() {
+        shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, createSubject());
+        shareIntent.putExtra(Intent.EXTRA_TEXT, createText());
+        shareIntent.setType("text/plain");
+        ((MovieDetailActivity)getActivity()).setShareIntent(shareIntent);
+    }
+
+    private String createText() {
+        return firstTrailer.getVideo_path().toString() + "\n\n" + "Shared from Popular Movies by Building Bridges";
+    }
+
+    private String createSubject() {
+        return movieDetail.getTitle() + ": " + firstTrailer.getTitle();
     }
 }

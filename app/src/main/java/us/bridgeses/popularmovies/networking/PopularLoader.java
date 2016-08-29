@@ -16,5 +16,6 @@ public interface PopularLoader {
 
     void getPosters(@NonNull PosterLoaderCallback callback, @SortMode int mode, int page);
     void getDetails(@NonNull DetailsLoaderCallback callback, long id);
+    void getTrailers(@NonNull TrailerLoaderCallback callback, long id);
     void cancel();
 }

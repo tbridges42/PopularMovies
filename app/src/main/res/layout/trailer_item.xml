@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:paddingTop="@dimen/vertical_spacing"
+    android:paddingBottom="@dimen/vertical_spacing"
+    android:layout_height="124dp">
     <ImageView
         android:id="@+id/play_icon"
         android:layout_width="wrap_content"
@@ -17,4 +19,11 @@
         android:textSize="@dimen/subheading_size"
         android:padding="@dimen/text_padding"
         android:layout_toEndOf="@id/play_icon"/>
+    <ImageView
+        android:id="@+id/trailer_thumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="390dp"/>
 </RelativeLayout>

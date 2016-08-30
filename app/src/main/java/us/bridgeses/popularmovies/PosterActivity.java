@@ -1,6 +1,7 @@
 package us.bridgeses.popularmovies;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -10,41 +11,33 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import us.bridgeses.popularmovies.adapters.EndlessScrollListener;
+import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
 import us.bridgeses.popularmovies.fragments.PosterViewFragment;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
-import us.bridgeses.popularmovies.presenters.PosterActivityPresenter;
+import us.bridgeses.popularmovies.presenters.PosterPresenter;
+import us.bridgeses.popularmovies.presenters.PosterPresenterFragment;
 
 public class PosterActivity extends Activity
-        implements PosterActivityPresenter.PosterActivityCallbacks {
+        implements PosterPresenterFragment.PosterActivityCallbacks, Spinner.OnItemSelectedListener {
 
-    public static final String PRESENTER_TAG = "presenter";
     public static final String VIEW_TAG = "view";
 
     private PosterViewFragment viewFragment;
-    private PosterActivityPresenter presenter;
+    private PosterPresenter presenter;
 
     @Override
     @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poster);
-        presenter = null;
 
         viewFragment = (PosterViewFragment) getFragmentManager().findFragmentByTag(VIEW_TAG);
 
-        presenter = (PosterActivityPresenter) getFragmentManager().findFragmentByTag(PRESENTER_TAG);
-
-        if (presenter == null) {
-            presenter = new PosterActivityPresenter();
-            presenter.setRetainInstance(true);
-            getFragmentManager().beginTransaction().add(presenter, PRESENTER_TAG).commit();
-        }
-        if (presenter.getCachedAdapter() != null) {
-            setAdapter(presenter.getCachedAdapter());
-        }
+        presenter = PosterPresenterFragment.getInstance(this);
+        setAdapter(presenter.getCachedAdapter());
         presenter.setPopularLoader(new TmdbPopularLoader(this));
-        presenter.setListAdapterFactory(new RecyclerAdapterFactory(this));
+        presenter.setAdapterFactory(new RecyclerAdapterFactory(this));
         presenter.setCallbacks(this);
         presenter.refresh();
 
@@ -60,11 +53,11 @@ public class PosterActivity extends Activity
         viewFragment.addOnScrollListener(new EndlessScrollListener(layoutManager) {
             @Override
             public boolean onLoadMore(int page, int totalItemsCount) {
-                getNextPage();
+                presenter.getNextPage();
                 return true;
             }
         });
-        viewFragment.addSpinnerListener(presenter);
+        viewFragment.addSpinnerListener(this);
         viewFragment.setLayoutManager(layoutManager);
     }
 
@@ -74,30 +67,15 @@ public class PosterActivity extends Activity
         return size.x / 342;
     }
 
-    private void getNextPage() {
-        presenter.getNextPage();
-    }
-
-    public void setPosterAdapter(RecyclerView.Adapter adapter) {
-        viewFragment.setAdapter(adapter);
-    }
-
-    public void setScrollListener(RecyclerView.OnScrollListener scrollListener) {
-        viewFragment.addOnScrollListener(scrollListener);
-    }
-
     public void loadMovieDetails(long id) {
-
+        Intent intent = new Intent(this, MovieDetailActivity.class);
+        intent.putExtra("id", id);
+        startActivity(intent);
     }
 
     @Override
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        setPosterAdapter(adapter);
-    }
-
-    @Override
-    public void addOnScrollListener(RecyclerView.OnScrollListener listener) {
-
+    public void setAdapter(PosterAdapter adapter) {
+        viewFragment.setAdapter(adapter);
     }
 
     @Override
@@ -108,5 +86,15 @@ public class PosterActivity extends Activity
     @Override
     public void onRemoteFailure() {
         // Display error
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        presenter.changeSort(position);
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

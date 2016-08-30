@@ -2,7 +2,6 @@ package us.bridgeses.popularmovies.networking;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
 import android.util.Log;
@@ -19,6 +18,8 @@ import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.models.Trailer;
+import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;
+import static us.bridgeses.popularmovies.models.Poster.TOP_RATED_MODE;
 
 /**
  * Created by Tony on 8/7/2016.
@@ -36,7 +37,7 @@ public class TmdbPopularLoader implements PopularLoader {
     public static final int MAX_PAGE = 1000;
 
     @Override
-    public void getPosters(@NonNull PosterLoaderCallback callback, @SortMode int mode, int page) {
+    public void getPosters(@NonNull PosterLoaderCallback callback, @Poster.SortMode int mode, int page) {
         if (page <= 0 || page > MAX_PAGE) {
             return;
         }

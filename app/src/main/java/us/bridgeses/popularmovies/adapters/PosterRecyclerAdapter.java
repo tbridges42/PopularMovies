@@ -17,15 +17,12 @@ import us.bridgeses.popularmovies.models.Poster;
 /**
  * Created by Tony on 8/19/2016.
  */
-public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAdapter.PosterHolder> {
+public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAdapter.PosterHolder>
+        implements PosterAdapter {
 
     private List<Poster> posters;
     private Context context;
     private PosterClickListener listener;
-
-    public interface PosterClickListener {
-        void onItemClick(long id);
-    }
 
     public PosterRecyclerAdapter(Context context, List<Poster> posters) {
         this.context = context;

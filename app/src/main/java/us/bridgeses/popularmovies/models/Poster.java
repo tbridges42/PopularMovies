@@ -3,6 +3,7 @@ package us.bridgeses.popularmovies.models;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import org.json.JSONException;
@@ -12,6 +13,13 @@ import org.json.JSONObject;
  * Created by Tony on 8/6/2016.
  */
 public class Poster implements Parcelable {
+
+    @IntDef({MOST_POPULAR_MODE, TOP_RATED_MODE})
+    public @interface SortMode {}
+
+    public static final int MOST_POPULAR_MODE = 0;
+    public static final int TOP_RATED_MODE = 1;
+
     private Uri imageUri;
     private String contentDescription;
     private long id;

@@ -12,13 +12,13 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import us.bridgeses.popularmovies.R;
-import us.bridgeses.popularmovies.presenters.PosterActivityPresenter;
+import us.bridgeses.popularmovies.adapters.PosterAdapter;
+import us.bridgeses.popularmovies.presenters.PosterPresenterFragment;
 
 /**
  * Created by Tony on 8/29/2016.
  */
-public class PosterViewFragment extends Fragment
-        implements PosterActivityPresenter.PosterActivityCallbacks{
+public class PosterViewFragment extends Fragment {
 
     private RecyclerView posterView;
     private Spinner spinner;
@@ -50,22 +50,18 @@ public class PosterViewFragment extends Fragment
         spinner.setOnItemSelectedListener(listener);
     }
 
-    @Override
     public void addOnScrollListener(RecyclerView.OnScrollListener listener) {
         posterView.addOnScrollListener(listener);
     }
 
-    @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
         posterView.setAdapter(adapter);
     }
 
-    @Override
     public void onLocalFailure() {
         // TODO: Handle a local connection issue
     }
 
-    @Override
     public void onRemoteFailure() {
         // TODO: Handle a remote connection issue
     }

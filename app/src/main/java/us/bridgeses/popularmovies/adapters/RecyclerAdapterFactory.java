@@ -11,14 +11,14 @@ import us.bridgeses.popularmovies.models.Poster;
 /**
  * Created by Tony on 8/19/2016.
  */
-public class RecyclerAdapterFactory {
+public class RecyclerAdapterFactory implements AdapterFactory {
     private Context context;
 
     public RecyclerAdapterFactory(Context context) {
         this.context = context;
     }
 
-    public RecyclerView.Adapter getAdapter(List<Poster> posters) {
+    public PosterAdapter getAdapter(List<Poster> posters) {
         return new PosterRecyclerAdapter(context, posters);
     }
 }

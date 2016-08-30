@@ -32,7 +32,7 @@ public abstract class AsyncUrlTask<A> extends AsyncTask<String, Void, A> {
     private Context context;
 
     public AsyncUrlTask(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     @Override

@@ -14,7 +14,7 @@ public interface PosterPresenter {
 
     void setAdapterFactory(AdapterFactory factory);
 
-    void setCallbacks(PosterPresenterFragment.PosterActivityCallbacks callbacks);
+    void setCallback(PosterPresenterCallback callback);
 
     void refresh();
 

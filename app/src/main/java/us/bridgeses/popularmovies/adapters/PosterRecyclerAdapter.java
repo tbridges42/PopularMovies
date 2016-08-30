@@ -25,7 +25,7 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
     private PosterClickListener listener;
 
     public PosterRecyclerAdapter(Context context, List<Poster> posters) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         this.posters = posters;
     }
 
@@ -70,7 +70,7 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (listener != null) {
-                        listener.onItemClick(posters.get(position).getId());
+                        listener.onPosterClick(posters.get(position).getId());
                     }
                 }
             });

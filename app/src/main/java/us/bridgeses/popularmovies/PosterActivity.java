@@ -16,10 +16,12 @@ import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
 import us.bridgeses.popularmovies.fragments.PosterViewFragment;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.PosterPresenter;
+import us.bridgeses.popularmovies.presenters.PosterPresenterCallback;
 import us.bridgeses.popularmovies.presenters.PosterPresenterFragment;
 
 public class PosterActivity extends Activity
-        implements PosterPresenterFragment.PosterActivityCallbacks, Spinner.OnItemSelectedListener {
+        implements PosterPresenterCallback,
+        Spinner.OnItemSelectedListener {
 
     public static final String VIEW_TAG = "view";
 
@@ -27,23 +29,35 @@ public class PosterActivity extends Activity
     private PosterPresenter presenter;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poster);
 
         viewFragment = (PosterViewFragment) getFragmentManager().findFragmentByTag(VIEW_TAG);
 
-        presenter = PosterPresenterFragment.getInstance(this);
-        setAdapter(presenter.getCachedAdapter());
-        presenter.setPopularLoader(new TmdbPopularLoader(this));
-        presenter.setAdapterFactory(new RecyclerAdapterFactory(this));
-        presenter.setCallbacks(this);
-        presenter.refresh();
-
         if (viewFragment == null) {
             createViewFragment();
             getFragmentManager().beginTransaction().add(viewFragment, VIEW_TAG).commit();
+        }
+
+        setupPresenter();
+    }
+
+    private void setupPresenter() {
+        presenter = PosterPresenterFragment.getInstance(this,
+                new TmdbPopularLoader(this),
+                new RecyclerAdapterFactory(this),
+                this);
+        loadAdapter();
+    }
+
+    private void loadAdapter() {
+        PosterAdapter posterAdapter = presenter.getCachedAdapter();
+        if (posterAdapter != null) {
+            setAdapter(posterAdapter);
+        }
+        else {
+            presenter.refresh();
         }
     }
 
@@ -75,7 +89,7 @@ public class PosterActivity extends Activity
 
     @Override
     public void setAdapter(PosterAdapter adapter) {
-        viewFragment.setAdapter(adapter);
+        viewFragment.setAdapter((RecyclerView.Adapter)adapter);
     }
 
     @Override
@@ -95,6 +109,6 @@ public class PosterActivity extends Activity
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
+        // Do nothing
     }
 }

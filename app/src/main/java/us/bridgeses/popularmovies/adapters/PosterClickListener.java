@@ -5,5 +5,5 @@ package us.bridgeses.popularmovies.adapters;
  */
 public interface PosterClickListener {
 
-    void onItemClick(long id);
+    void onPosterClick(long id);
 }

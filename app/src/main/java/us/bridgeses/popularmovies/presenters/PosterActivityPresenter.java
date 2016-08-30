@@ -196,5 +196,6 @@ public class PosterActivityPresenter extends Fragment implements PosterLoaderCal
 
     public interface PosterActivityCallbacks extends ServiceCallback {
         void setAdapter(RecyclerView.Adapter adapter);
+        void addOnScrollListener(RecyclerView.OnScrollListener listener);
     }
 }

@@ -1,12 +1,13 @@
 package us.bridgeses.popularmovies.presenters;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
-import android.support.v4.app.ShareCompat;
+import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,8 @@ import java.io.IOException;
 import java.util.List;
 
 import us.bridgeses.popularmovies.MovieDetailActivity;
-import us.bridgeses.popularmovies.adapters.TrailerAdapter;
+import us.bridgeses.popularmovies.adapters.RecyclerTrailerAdapter;
+import us.bridgeses.popularmovies.fragments.MovieView;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Trailer;
 import us.bridgeses.popularmovies.networking.DetailsLoaderCallback;
@@ -27,15 +29,17 @@ import us.bridgeses.popularmovies.networking.TrailerLoaderCallback;
 /**
  * Created by Tony on 8/27/2016.
  */
-public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallback,
-        TrailerLoaderCallback, TrailerAdapter.TrailerClickCallback {
+public class DetailPresenterFragment extends Fragment implements DetailsLoaderCallback,
+        TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback, MovieDetailViewer {
 
-    private static final String TAG = "MovieDetailPresenter";
+    @SuppressWarnings("unused")
+    private static final String TAG = "DetailPresenterFragment";
 
     private PopularLoader popularLoader;
     private MovieDetail movieDetail;
     private Trailer firstTrailer;
     private Intent shareIntent;
+    private DetailPresenterCallback callback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -88,7 +92,9 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
     @Override
     public void onReturnDetails(MovieDetail detail) {
         this.movieDetail = detail;
-        ((MovieDetailActivity) getActivity()).setMovieDetail(detail);
+        if (callback != null) {
+            callback.setMovieDetail(detail);
+        }
     }
 
     @Override
@@ -105,10 +111,11 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
     public void onReturnTrailers(List<Trailer> trailers) {
         firstTrailer = trailers.get(0);
         Log.d(TAG, "onReturnTrailers: setting adapter with size " + trailers.size());
-        TrailerAdapter adapter = new TrailerAdapter(getActivity(), trailers);
+        RecyclerTrailerAdapter adapter = new RecyclerTrailerAdapter(getActivity(), trailers);
         adapter.setCallback(this);
-        MovieDetailActivity activity = ((MovieDetailActivity) getActivity());
-        activity.setAdapter(adapter);
+        if (callback != null) {
+            callback.setAdapter(adapter);
+        }
         updateShareIntent();
     }
 
@@ -123,7 +130,9 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, createSubject());
         shareIntent.putExtra(Intent.EXTRA_TEXT, createText());
         shareIntent.setType("text/plain");
-        ((MovieDetailActivity)getActivity()).setShareIntent(shareIntent);
+        if (callback != null) {
+            callback.setShareIntent(shareIntent);
+        }
     }
 
     private String createText() {
@@ -132,5 +141,14 @@ public class MovieDetailPresenter extends Fragment implements DetailsLoaderCallb
 
     private String createSubject() {
         return movieDetail.getTitle() + ": " + firstTrailer.getTitle();
+    }
+
+    @Override
+    public void load(Activity activity, @IdRes int resId, long id) {
+        activity.getFragmentManager().beginTransaction().add(resId, this, TAG).commit();
+    }
+
+    public void setCallback(DetailPresenterCallback callback) {
+        this.callback = callback;
     }
 }

@@ -19,16 +19,16 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import java.util.Locale;
-
 import us.bridgeses.dateview.DateView;
 import us.bridgeses.popularmovies.R;
+import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
+import us.bridgeses.popularmovies.presenters.DetailPresenterCallback;
 
 /**
  * Created by tbrid on 8/30/2016.
  */
-public class MovieViewFragment extends Fragment implements MovieView {
+public class MovieViewFragment extends Fragment implements MovieView, DetailPresenterCallback {
     private static final String TAG = "MovieViewFragment";
     private static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
@@ -36,12 +36,13 @@ public class MovieViewFragment extends Fragment implements MovieView {
     private ImageView poster;
     private DateView releaseDate;
     private TextView ratings;
-    private TextView synposis;
+    private TextView synopsis;
     private MovieDetail movieDetail;
     private ShareActionProvider shareActionProvider;
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
@@ -61,7 +62,7 @@ public class MovieViewFragment extends Fragment implements MovieView {
         poster = (ImageView)view.findViewById(R.id.detail_poster);
         releaseDate = (DateView)view.findViewById(R.id.detail_release);
         ratings = (TextView)view.findViewById(R.id.detail_ratings);
-        synposis = (TextView)view.findViewById(R.id.detail_synopsis);
+        synopsis = (TextView)view.findViewById(R.id.detail_synopsis);
         if (savedInstanceState != null) {
             setMovieDetail((MovieDetail) savedInstanceState.getParcelable(MOVIE_DETAIL));
         }
@@ -81,6 +82,7 @@ public class MovieViewFragment extends Fragment implements MovieView {
         shareActionProvider.setShareIntent(shareIntent);
     }
 
+    @Override
     public void setMovieDetail(MovieDetail movieDetail) {
         this.movieDetail = movieDetail;
         Picasso.with(getActivity()).load(movieDetail.getPoster()
@@ -89,13 +91,15 @@ public class MovieViewFragment extends Fragment implements MovieView {
         releaseDate.setDate(movieDetail.getReleaseDate().getTime());
         ratings.setText(String.format(getResources().getString(R.string.rating),
                 movieDetail.getRating()));
-        synposis.setText(movieDetail.getSynopsis());
+        synopsis.setText(movieDetail.getSynopsis());
     }
 
-    public void setAdapter(RecyclerView.Adapter trailerAdapter) {
-        trailerView.setAdapter(trailerAdapter);
+    @Override
+    public void setAdapter(TrailerAdapter trailerAdapter) {
+        trailerView.setAdapter((RecyclerView.Adapter) trailerAdapter);
     }
 
+    @Override
     public void setShareIntent(Intent intent) {
         shareActionProvider.setShareIntent(intent);
     }

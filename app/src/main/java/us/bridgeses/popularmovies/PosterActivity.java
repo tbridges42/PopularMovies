@@ -2,18 +2,14 @@ package us.bridgeses.popularmovies;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Spinner;
 
-import us.bridgeses.popularmovies.adapters.EndlessScrollListener;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
+import us.bridgeses.popularmovies.fragments.PosterViewCallback;
 import us.bridgeses.popularmovies.fragments.PosterViewFragment;
+import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.PosterPresenter;
 import us.bridgeses.popularmovies.presenters.PosterPresenterCallback;
@@ -21,26 +17,30 @@ import us.bridgeses.popularmovies.presenters.PosterPresenterFragment;
 
 public class PosterActivity extends Activity
         implements PosterPresenterCallback,
-        Spinner.OnItemSelectedListener {
+        PosterViewCallback {
 
-    public static final String VIEW_TAG = "view";
+    @SuppressWarnings("unused")
+    private static final String TAG = "PosterActivity";
 
-    private PosterViewFragment viewFragment;
+    private PosterViewFragment posterView;
     private PosterPresenter presenter;
+    private boolean isDualPane = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poster);
 
-        viewFragment = (PosterViewFragment) getFragmentManager().findFragmentByTag(VIEW_TAG);
+        isDualPane = findViewById(R.id.detail_frame) != null;
 
-        if (viewFragment == null) {
-            createViewFragment();
-            getFragmentManager().beginTransaction().add(viewFragment, VIEW_TAG).commit();
-        }
+        setupView();
 
         setupPresenter();
+    }
+
+    private void setupView() {
+        posterView = PosterViewFragment.getInstance(this, R.id.poster_fragment_frame, this);
+
     }
 
     private void setupPresenter() {
@@ -61,26 +61,7 @@ public class PosterActivity extends Activity
         }
     }
 
-    private void createViewFragment() {
-        viewFragment = new PosterViewFragment();
-        GridLayoutManager layoutManager = new GridLayoutManager(this, getLayoutWidth());
-        viewFragment.addOnScrollListener(new EndlessScrollListener(layoutManager) {
-            @Override
-            public boolean onLoadMore(int page, int totalItemsCount) {
-                presenter.getNextPage();
-                return true;
-            }
-        });
-        viewFragment.addSpinnerListener(this);
-        viewFragment.setLayoutManager(layoutManager);
-    }
-
-    private int getLayoutWidth() {
-        Point size = new Point();
-        getWindowManager().getDefaultDisplay().getSize(size);
-        return size.x / 342;
-    }
-
+    @Override
     public void loadMovieDetails(long id) {
         Intent intent = new Intent(this, MovieDetailActivity.class);
         intent.putExtra("id", id);
@@ -89,7 +70,7 @@ public class PosterActivity extends Activity
 
     @Override
     public void setAdapter(PosterAdapter adapter) {
-        viewFragment.setAdapter((RecyclerView.Adapter)adapter);
+        posterView.setAdapter((RecyclerView.Adapter)adapter);
     }
 
     @Override
@@ -103,12 +84,12 @@ public class PosterActivity extends Activity
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        presenter.changeSort(position);
+    public void loadMore() {
+        presenter.getNextPage();
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // Do nothing
+    public void onSortSelected(@Poster.SortMode int position) {
+        presenter.changeSort(position);
     }
 }

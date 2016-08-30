@@ -20,6 +20,8 @@ public class Poster implements Parcelable {
     public static final int MOST_POPULAR_MODE = 0;
     public static final int TOP_RATED_MODE = 1;
 
+    public static final int THUMBNAIL_WIDTH = 342;
+
     private Uri imageUri;
     private String contentDescription;
     private long id;

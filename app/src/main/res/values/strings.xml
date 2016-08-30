@@ -3,6 +3,7 @@
     <string name="error_loading_image">There was an error loading this image</string>
     <string name="trailers">Trailers</string>
     <string name="share">Share</string>
+    <string name="rating">%1$f/10</string>
     <string-array name="sort_modes">
         <item>Most Popular</item>
         <item>Highest Rated</item>

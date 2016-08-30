@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.fragments;
+package us.bridgeses.popularmovies.views;
 
 /**
  * Created by Tony on 8/30/2016.

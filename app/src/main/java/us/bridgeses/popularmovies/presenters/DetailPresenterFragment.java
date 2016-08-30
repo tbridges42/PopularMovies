@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import us.bridgeses.popularmovies.MovieDetailActivity;
 import us.bridgeses.popularmovies.adapters.RecyclerTrailerAdapter;
-import us.bridgeses.popularmovies.fragments.MovieView;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Trailer;
 import us.bridgeses.popularmovies.networking.DetailsLoaderCallback;

@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.fragments;
+package us.bridgeses.popularmovies.views;
 
 /**
  * Created by tbrid on 8/30/2016.

@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import us.bridgeses.popularmovies.fragments.MovieViewFragment;
+import us.bridgeses.popularmovies.views.MovieViewFragment;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.DetailPresenterFragment;
 

@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
-import us.bridgeses.popularmovies.fragments.PosterViewCallback;
-import us.bridgeses.popularmovies.fragments.PosterViewFragment;
+import us.bridgeses.popularmovies.views.PosterViewCallback;
+import us.bridgeses.popularmovies.views.PosterViewFragment;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.PosterPresenter;

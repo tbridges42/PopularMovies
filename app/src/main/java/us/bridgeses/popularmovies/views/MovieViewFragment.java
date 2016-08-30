@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.fragments;
+package us.bridgeses.popularmovies.views;
 
 import android.app.Fragment;
 import android.content.Intent;

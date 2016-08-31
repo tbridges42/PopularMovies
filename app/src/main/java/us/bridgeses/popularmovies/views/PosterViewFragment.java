@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
 
     private RecyclerView posterView;
     private PosterViewCallback callback;
+    private RecyclerView.Adapter cachedAdapter;
 
     public static PosterViewFragment getInstance(Activity activity, @IdRes int res,
                                                  PosterViewCallback callback) {
@@ -45,6 +47,9 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
         final View view = inflater.inflate(R.layout.fragment_poster, parent, false);
         posterView = (RecyclerView) view.findViewById(R.id.poster_list);
         posterView.setHasFixedSize(true);
+        if (cachedAdapter != null) {
+            posterView.setAdapter(cachedAdapter);
+        }
         Spinner spinner = (Spinner) view.findViewById(R.id.sort_mode);
         spinner.setOnItemSelectedListener(this);
         final ViewTreeObserver vto = view.getViewTreeObserver();
@@ -59,6 +64,7 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
     }
 
     private void setUpPosterView(View view) {
+        Log.d(TAG, "setUpPosterView: " + view.getWidth());
         int width = view.getWidth() / Poster.THUMBNAIL_WIDTH;
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), width);
         posterView.setLayoutManager(layoutManager);
@@ -78,7 +84,12 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
     }
 
     public void setAdapter(RecyclerView.Adapter adapter) {
-        posterView.setAdapter(adapter);
+        if (posterView != null) {
+            posterView.setAdapter(adapter);
+        }
+        else {
+            cachedAdapter = adapter;
+        }
     }
 
     @Override

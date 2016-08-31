@@ -1,18 +1,18 @@
 package us.bridgeses.popularmovies.presenters;
 
+import us.bridgeses.popularmovies.DetailActivityWrapper;
+
 /**
  * Created by Tony on 8/30/2016.
  */
 public class DetailViewerFactory {
 
-    public MovieDetailViewer getViewer(boolean hasDualPane) {
+    public static MovieDetailViewer getViewer(boolean hasDualPane) {
         if (hasDualPane) {
-            // Set up and return fragment
-            return null;
+            return new DetailFragmentWrapper();
         }
         else {
-            // Set up and launch activity
-            return null;
+            return new DetailActivityWrapper();
         }
     }
 }

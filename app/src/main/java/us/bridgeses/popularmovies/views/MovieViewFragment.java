@@ -29,6 +29,8 @@ import us.bridgeses.popularmovies.presenters.DetailPresenterCallback;
  * Created by tbrid on 8/30/2016.
  */
 public class MovieViewFragment extends Fragment implements MovieView, DetailPresenterCallback {
+
+    @SuppressWarnings("unused")
     private static final String TAG = "MovieViewFragment";
     private static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
@@ -39,6 +41,8 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
     private TextView synopsis;
     private MovieDetail movieDetail;
     private ShareActionProvider shareActionProvider;
+    private TrailerAdapter cachedAdapter;
+    private Intent cachedIntent;
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
@@ -58,15 +62,30 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
                     return false;
                 }
             });
+            if (cachedAdapter != null) {
+                trailerView.setAdapter((RecyclerView.Adapter) cachedAdapter);
+            }
         }
+
         poster = (ImageView)view.findViewById(R.id.detail_poster);
         releaseDate = (DateView)view.findViewById(R.id.detail_release);
         ratings = (TextView)view.findViewById(R.id.detail_ratings);
         synopsis = (TextView)view.findViewById(R.id.detail_synopsis);
-        if (savedInstanceState != null) {
-            setMovieDetail((MovieDetail) savedInstanceState.getParcelable(MOVIE_DETAIL));
+        if (movieDetail != null) {
+            setMovieDetail(movieDetail);
+        }
+        else {
+            if (savedInstanceState != null) {
+                setMovieDetail((MovieDetail) savedInstanceState.getParcelable(MOVIE_DETAIL));
+            }
         }
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putParcelable(MOVIE_DETAIL, movieDetail);
     }
 
     @Override
@@ -77,30 +96,47 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
         MenuItem item = menu.findItem(R.id.menu_share);
 
         shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.putExtra(Intent.EXTRA_TEXT, "Test");
-        shareActionProvider.setShareIntent(shareIntent);
+        if (cachedIntent == null) {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, "Test");
+            shareActionProvider.setShareIntent(shareIntent);
+        }
+        else {
+            shareActionProvider.setShareIntent(cachedIntent);
+        }
     }
 
     @Override
     public void setMovieDetail(MovieDetail movieDetail) {
         this.movieDetail = movieDetail;
-        Picasso.with(getActivity()).load(movieDetail.getPoster()
-                .getImageUri()).into(poster);
-        getActivity().setTitle(movieDetail.getTitle());
-        releaseDate.setDate(movieDetail.getReleaseDate().getTime());
-        ratings.setText(String.format(getResources().getString(R.string.rating),
-                movieDetail.getRating()));
-        synopsis.setText(movieDetail.getSynopsis());
+        if (poster != null) {
+            Picasso.with(getActivity()).load(movieDetail.getPoster()
+                    .getImageUri()).into(poster);
+            getActivity().setTitle(movieDetail.getTitle());
+            releaseDate.setDate(movieDetail.getReleaseDate().getTime());
+            ratings.setText(String.format(getResources().getString(R.string.rating),
+                    movieDetail.getRating()));
+            synopsis.setText(movieDetail.getSynopsis());
+        }
     }
 
     @Override
     public void setAdapter(TrailerAdapter trailerAdapter) {
-        trailerView.setAdapter((RecyclerView.Adapter) trailerAdapter);
+        if (trailerView != null) {
+            trailerView.setAdapter((RecyclerView.Adapter) trailerAdapter);
+        }
+        else {
+            cachedAdapter = trailerAdapter;
+        }
     }
 
     @Override
     public void setShareIntent(Intent intent) {
-        shareActionProvider.setShareIntent(intent);
+        if (shareActionProvider != null) {
+            shareActionProvider.setShareIntent(intent);
+        }
+        else {
+            cachedIntent = intent;
+        }
     }
 }

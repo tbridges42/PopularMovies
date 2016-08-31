@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
     <FrameLayout
         android:id="@id/poster_fragment_frame"
-        android:layout_width="300dp"
+        android:layout_width="1200dp"
         android:layout_height="match_parent" />
     <FrameLayout
         android:id="@+id/detail_frame"

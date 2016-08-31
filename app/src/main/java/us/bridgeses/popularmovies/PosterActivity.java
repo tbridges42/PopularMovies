@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.util.Log;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
+import us.bridgeses.popularmovies.presenters.DetailFragmentWrapper;
+import us.bridgeses.popularmovies.presenters.DetailViewerFactory;
 import us.bridgeses.popularmovies.views.PosterViewCallback;
 import us.bridgeses.popularmovies.views.PosterViewFragment;
 import us.bridgeses.popularmovies.models.Poster;
@@ -36,6 +40,9 @@ public class PosterActivity extends Activity
         setupView();
 
         setupPresenter();
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float logicalDensity = metrics.density;
+        Log.d(TAG, "onCreate: " + (metrics.widthPixels / logicalDensity));
     }
 
     private void setupView() {
@@ -63,9 +70,7 @@ public class PosterActivity extends Activity
 
     @Override
     public void loadMovieDetails(long id) {
-        Intent intent = new Intent(this, MovieDetailActivity.class);
-        intent.putExtra("id", id);
-        startActivity(intent);
+        DetailViewerFactory.getViewer(isDualPane).load(this, R.id.detail_frame, id);
     }
 
     @Override

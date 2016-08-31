@@ -1,12 +1,13 @@
 package us.bridgeses.popularmovies.views;
 
+import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
+import android.support.annotation.IdRes;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -43,6 +45,16 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
     private ShareActionProvider shareActionProvider;
     private TrailerAdapter cachedAdapter;
     private Intent cachedIntent;
+
+    public static MovieViewFragment getInstance(Activity activity, @IdRes int res) {
+        FragmentManager fm = activity.getFragmentManager();
+        MovieViewFragment fragment = (MovieViewFragment) fm.findFragmentByTag(TAG);
+        if (fragment == null) {
+            fragment = new MovieViewFragment();
+            activity.getFragmentManager().beginTransaction().add(res, fragment, TAG).commit();
+        }
+        return fragment;
+    }
 
     @Override
     public  void onCreate(Bundle savedInstanceState) {
@@ -95,7 +107,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
 
         MenuItem item = menu.findItem(R.id.menu_share);
 
-        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(item);
+        shareActionProvider = (ShareActionProvider) item.getActionProvider();
         if (cachedIntent == null) {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.putExtra(Intent.EXTRA_TEXT, "Test");

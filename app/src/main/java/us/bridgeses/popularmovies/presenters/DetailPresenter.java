@@ -9,4 +9,6 @@ public interface DetailPresenter {
     void loadDetail(long id);
 
     void updateShareIntent();
+
+    void loadCached();
 }

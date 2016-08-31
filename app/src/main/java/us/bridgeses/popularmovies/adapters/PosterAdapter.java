@@ -23,4 +23,5 @@ public interface PosterAdapter {
 
     void setListener(PosterClickListener listener);
     void addPosters(List<Poster> posters);
+    Poster getPoster(int position);
 }

@@ -58,6 +58,11 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
         notifyItemRangeInserted(oldSize, posters.size());
     }
 
+    @Override
+    public Poster getPoster(int position) {
+        return posters.get(position);
+    }
+
     class PosterHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;

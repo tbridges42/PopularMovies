@@ -1,7 +1,6 @@
 package us.bridgeses.popularmovies;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -9,15 +8,15 @@ import android.util.Log;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
-import us.bridgeses.popularmovies.presenters.DetailFragmentWrapper;
-import us.bridgeses.popularmovies.presenters.DetailViewerFactory;
-import us.bridgeses.popularmovies.views.PosterViewCallback;
-import us.bridgeses.popularmovies.views.PosterViewFragment;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
+import us.bridgeses.popularmovies.presenters.DetailViewerFactory;
+import us.bridgeses.popularmovies.presenters.MovieDetailViewer;
 import us.bridgeses.popularmovies.presenters.PosterPresenter;
 import us.bridgeses.popularmovies.presenters.PosterPresenterCallback;
 import us.bridgeses.popularmovies.presenters.PosterPresenterFragment;
+import us.bridgeses.popularmovies.views.PosterViewCallback;
+import us.bridgeses.popularmovies.views.PosterViewFragment;
 
 public class PosterActivity extends Activity
         implements PosterPresenterCallback,
@@ -28,21 +27,34 @@ public class PosterActivity extends Activity
 
     private PosterViewFragment posterView;
     private PosterPresenter presenter;
+    private MovieDetailViewer detailViewer;
     private boolean isDualPane = false;
+    private boolean firstRun = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poster);
 
+        Log.d(TAG, "onCreate: ");
         isDualPane = findViewById(R.id.detail_frame) != null;
+        if (savedInstanceState != null) {
+            firstRun = savedInstanceState.getBoolean("firstRun");
+        }
+
+        detailViewer = DetailViewerFactory.getViewer(isDualPane);
 
         setupView();
 
         setupPresenter();
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        float logicalDensity = metrics.density;
-        Log.d(TAG, "onCreate: " + (metrics.widthPixels / logicalDensity));
+
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putBoolean("firstRun", firstRun);
     }
 
     private void setupView() {
@@ -51,6 +63,7 @@ public class PosterActivity extends Activity
     }
 
     private void setupPresenter() {
+        Log.d(TAG, "setupPresenter: ");
         presenter = PosterPresenterFragment.getInstance(this,
                 new TmdbPopularLoader(this),
                 new RecyclerAdapterFactory(this),
@@ -59,6 +72,7 @@ public class PosterActivity extends Activity
     }
 
     private void loadAdapter() {
+        Log.d(TAG, "loadAdapter: ");
         PosterAdapter posterAdapter = presenter.getCachedAdapter();
         if (posterAdapter != null) {
             setAdapter(posterAdapter);
@@ -70,11 +84,25 @@ public class PosterActivity extends Activity
 
     @Override
     public void loadMovieDetails(long id) {
-        DetailViewerFactory.getViewer(isDualPane).load(this, R.id.detail_frame, id);
+        Log.d(TAG, "loadMovieDetails: ");
+        if (detailViewer != null) {
+            detailViewer.load(this, R.id.detail_frame, id);
+        }
     }
 
     @Override
     public void setAdapter(PosterAdapter adapter) {
+        Log.d(TAG, "setAdapter: ");
+        if (isDualPane) {
+            if (firstRun) {
+                loadMovieDetails(adapter.getPoster(0).getId());
+                firstRun = false;
+            }
+            else {
+                Log.d(TAG, "setAdapter: loading cached");
+                detailViewer.loadCached(this);
+            }
+        }
         posterView.setAdapter((RecyclerView.Adapter)adapter);
     }
 

@@ -2,6 +2,7 @@ package us.bridgeses.popularmovies.views;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.v7.widget.GridLayoutManager;
@@ -32,9 +33,13 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
 
     public static PosterViewFragment getInstance(Activity activity, @IdRes int res,
                                                  PosterViewCallback callback) {
-        PosterViewFragment fragment = new PosterViewFragment();
+        FragmentManager fm = activity.getFragmentManager();
+        PosterViewFragment fragment = (PosterViewFragment) fm.findFragmentByTag(TAG);
+        if (fragment == null) {
+            fragment = new PosterViewFragment();
+            activity.getFragmentManager().beginTransaction().add(res, fragment, TAG).commit();
+        }
         fragment.setCallback(callback);
-        activity.getFragmentManager().beginTransaction().add(res, fragment, TAG).commit();
         return fragment;
     }
 

@@ -25,11 +25,17 @@ public class Poster implements Parcelable {
     private Uri imageUri;
     private String contentDescription;
     private long id;
+    private boolean favorite;
 
     public Poster(Uri imageUri, String contentDescription, long id) {
+        this(imageUri, contentDescription, id, false);
+    }
+
+    public Poster(Uri imageUri, String contentDescription, long id, boolean favorite) {
         this.imageUri = imageUri;
         this.contentDescription = contentDescription;
         this.id = id;
+        this.favorite = favorite;
     }
 
     public static Poster fromJson(JSONObject json) {
@@ -58,8 +64,12 @@ public class Poster implements Parcelable {
         return id;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
     protected Poster(Parcel in) {
-        this(Uri.parse(in.readString()), in.readString(), in.readLong());
+        this(Uri.parse(in.readString()), in.readString(), in.readLong(), in.readInt() == 1);
     }
 
     public static final Creator<Poster> CREATOR = new Creator<Poster>() {
@@ -84,5 +94,6 @@ public class Poster implements Parcelable {
         dest.writeString(imageUri.toString());
         dest.writeString(contentDescription);
         dest.writeLong(id);
+        dest.writeInt(favorite ? 1 : 0);
     }
 }

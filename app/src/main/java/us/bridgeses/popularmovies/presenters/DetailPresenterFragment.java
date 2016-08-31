@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import us.bridgeses.popularmovies.adapters.RecyclerTrailerAdapter;
+import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Trailer;
 import us.bridgeses.popularmovies.networking.DetailsLoaderCallback;
@@ -29,7 +30,7 @@ import us.bridgeses.popularmovies.networking.TrailerLoaderCallback;
  * Created by Tony on 8/27/2016.
  */
 public class DetailPresenterFragment extends Fragment implements DetailsLoaderCallback,
-        TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback, MovieDetailViewer,
+        TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback,
         DetailPresenter {
 
     @SuppressWarnings("unused")
@@ -40,6 +41,7 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
     private Trailer firstTrailer;
     private Intent shareIntent;
     private DetailPresenterCallback callback;
+    private TrailerAdapter adapter;
 
     public static DetailPresenterFragment getInstance(Activity activity,
                                                       DetailPresenterCallback callback,
@@ -97,6 +99,7 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
     }
 
     public void loadDetail(long id) {
+        Log.d(TAG, "loadDetail: ");
         if (popularLoader != null) {
             popularLoader.getDetails(this, id);
             popularLoader.getTrailers(this, id);
@@ -125,7 +128,7 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
     public void onReturnTrailers(List<Trailer> trailers) {
         firstTrailer = trailers.get(0);
         Log.d(TAG, "onReturnTrailers: setting adapter with size " + trailers.size());
-        RecyclerTrailerAdapter adapter = new RecyclerTrailerAdapter(getActivity(), trailers);
+        adapter = new RecyclerTrailerAdapter(getActivity(), trailers);
         adapter.setCallback(this);
         if (callback != null) {
             callback.setAdapter(adapter);
@@ -157,12 +160,17 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
         return movieDetail.getTitle() + ": " + firstTrailer.getTitle();
     }
 
-    @Override
-    public void load(Activity activity, @IdRes int resId, long id) {
-        activity.getFragmentManager().beginTransaction().add(resId, this, TAG).commit();
+    public void setCallback(DetailPresenterCallback callback) {
+        Log.d(TAG, "setCallback: ");
+        this.callback = callback;
     }
 
-    public void setCallback(DetailPresenterCallback callback) {
-        this.callback = callback;
+    public void loadCached() {
+        Log.d(TAG, "loadCached: ");
+        if (callback != null) {
+            Log.d(TAG, "loadCached: callback not null");
+            callback.setMovieDetail(movieDetail);
+            callback.setAdapter(adapter);
+        }
     }
 }

@@ -9,4 +9,6 @@ import android.support.annotation.IdRes;
 public interface MovieDetailViewer {
 
     void load(Activity activity, @IdRes int resId, long id);
+
+    void loadCached(Activity activity);
 }

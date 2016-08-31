@@ -2,6 +2,7 @@ package us.bridgeses.popularmovies.presenters;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -28,7 +29,8 @@ import us.bridgeses.popularmovies.networking.TrailerLoaderCallback;
  * Created by Tony on 8/27/2016.
  */
 public class DetailPresenterFragment extends Fragment implements DetailsLoaderCallback,
-        TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback, MovieDetailViewer {
+        TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback, MovieDetailViewer,
+        DetailPresenter {
 
     @SuppressWarnings("unused")
     private static final String TAG = "DetailPresenterFragment";
@@ -38,6 +40,20 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
     private Trailer firstTrailer;
     private Intent shareIntent;
     private DetailPresenterCallback callback;
+
+    public static DetailPresenterFragment getInstance(Activity activity,
+                                                      DetailPresenterCallback callback,
+                                                      PopularLoader popularLoader) {
+        FragmentManager fm = activity.getFragmentManager();
+        DetailPresenterFragment fragment = (DetailPresenterFragment) fm.findFragmentByTag(TAG);
+        if (fragment == null) {
+            fragment = new DetailPresenterFragment();
+            fm.beginTransaction().add(fragment, TAG).commit();
+        }
+        fragment.setCallback(callback);
+        fragment.popularLoader = popularLoader;
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

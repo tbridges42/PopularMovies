@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.networking;
+package us.bridgeses.popularmovies.persistence.networking;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -11,8 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import us.bridgeses.popularmovies.models.MovieDetail;
 
 /**
  * Created by tbrid on 8/27/2016.

@@ -1,7 +1,7 @@
 package us.bridgeses.popularmovies.presenters;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
-import us.bridgeses.popularmovies.networking.ServiceCallback;
+import us.bridgeses.popularmovies.persistence.networking.ServiceCallback;
 
 /**
  * Created by tbrid on 8/29/2016.

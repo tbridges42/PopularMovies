@@ -22,6 +22,15 @@ public class MovieDetail implements Parcelable {
     private final Poster poster;
     private final float rating;
     private final String synopsis;
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     private final boolean favorite;
     private long id;
 

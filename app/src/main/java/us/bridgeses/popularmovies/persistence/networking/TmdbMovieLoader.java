@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.networking;
+package us.bridgeses.popularmovies.persistence.networking;
 
 import android.content.Context;
 import android.net.Uri;
@@ -18,15 +18,20 @@ import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.models.Trailer;
+import us.bridgeses.popularmovies.persistence.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.persistence.MovieLoader;
+import us.bridgeses.popularmovies.persistence.PosterLoaderCallback;
+import us.bridgeses.popularmovies.persistence.TrailerLoaderCallback;
+
 import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;
 import static us.bridgeses.popularmovies.models.Poster.TOP_RATED_MODE;
 
 /**
  * Created by Tony on 8/7/2016.
  */
-public class TmdbPopularLoader implements PopularLoader {
+public class TmdbMovieLoader implements MovieLoader {
 
-    private static final String TAG = "TmdbPopularLoader";
+    private static final String TAG = "TmdbMovieLoader";
 
     public static final String BASE_URL = "http://api.themoviedb.org/3/movie/";
     public static final String POPULAR_URL = "popular";
@@ -37,7 +42,8 @@ public class TmdbPopularLoader implements PopularLoader {
     public static final int MAX_PAGE = 1000;
 
     @Override
-    public void getPosters(@NonNull PosterLoaderCallback callback, @Poster.SortMode int mode, int page) {
+    public void getPosters(@NonNull PosterLoaderCallback callback,
+                           @Poster.SortMode int mode, int page) {
         if (page <= 0 || page > MAX_PAGE) {
             return;
         }
@@ -75,7 +81,7 @@ public class TmdbPopularLoader implements PopularLoader {
 
     private Context context;
 
-    public TmdbPopularLoader(Context context) {
+    public TmdbMovieLoader(Context context) {
         this.context = context;
     }
 
@@ -95,6 +101,7 @@ public class TmdbPopularLoader implements PopularLoader {
         @Override
         public MovieDetail readJson(InputStream is) throws IOException {
             JsonReader reader = readIt(is);
+            long id = 0L;
             String title = "";
             Uri posterPath = null;
             String releaseDate = "";
@@ -106,6 +113,9 @@ public class TmdbPopularLoader implements PopularLoader {
                 name = reader.nextName();
                 Log.d(TAG, "readDetails: " + name);
                 switch (name) {
+                    case "id":
+                        id = reader.nextLong();
+                        break;
                     case "original_title":
                         title = reader.nextString();
                         break;
@@ -133,7 +143,7 @@ public class TmdbPopularLoader implements PopularLoader {
             catch (ParseException e) {
                 throw new IllegalArgumentException("Invalid date format");
             }
-            return new MovieDetail(title, cal, new Poster(posterPath, title, 0L), rating, synopsis);
+            return new MovieDetail(id, title, cal, new Poster(posterPath, title, 0L), rating, synopsis);
         }
 
         @Override

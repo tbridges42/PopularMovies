@@ -174,6 +174,16 @@ public class PersistenceHelperImpl implements PersistenceHelper, MoviesContract 
 
     @Override
     public void deleteFavorite(long id) {
+        Cursor cursor = resolver.query(MovieEntry.MOVIE_URI,
+                new String[] { MovieEntry.COLUMN_POSTER }, MovieEntry._ID + "= ?",
+                new String[] {Long.toString(id)}, null);
+        if (cursor != null) {
+            cursor.moveToFirst();
+            Uri imagePath =
+                    Uri.parse(cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER)));
+            imageSaver.deleteImage(imagePath);
+            cursor.close();
+        }
         resolver.delete(MovieEntry.MOVIE_URI, MovieEntry._ID + "= ?",
                 new String[] {Long.toString(id)});
     }

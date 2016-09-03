@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
     private static final String MOVIE_DETAIL = "MOVIE_DETAIL";
 
     private RecyclerView trailerView;
+    private CheckBox favorite;
     private ImageView poster;
     private DateView releaseDate;
     private TextView ratings;
@@ -78,7 +81,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
                 trailerView.setAdapter((RecyclerView.Adapter) cachedAdapter);
             }
         }
-
+        favorite = (CheckBox)view.findViewById(R.id.detail_favorite);
         poster = (ImageView)view.findViewById(R.id.detail_poster);
         releaseDate = (DateView)view.findViewById(R.id.detail_release);
         ratings = (TextView)view.findViewById(R.id.detail_ratings);
@@ -129,6 +132,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
             ratings.setText(String.format(getResources().getString(R.string.rating),
                     movieDetail.getRating()));
             synopsis.setText(movieDetail.getSynopsis());
+            favorite.setChecked(movieDetail.isFavorite());
         }
     }
 
@@ -149,6 +153,13 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
         }
         else {
             cachedIntent = intent;
+        }
+    }
+
+    @Override
+    public void setFavoriteListener(CheckBox.OnCheckedChangeListener listener) {
+        if (favorite != null) {
+            favorite.setOnCheckedChangeListener(listener);
         }
     }
 }

@@ -19,8 +19,8 @@ import us.bridgeses.popularmovies.adapters.AdapterFactory;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.PosterClickListener;
 import us.bridgeses.popularmovies.models.Poster;
-import us.bridgeses.popularmovies.networking.PopularLoader;
-import us.bridgeses.popularmovies.networking.PosterLoaderCallback;
+import us.bridgeses.popularmovies.persistence.MovieLoader;
+import us.bridgeses.popularmovies.persistence.PosterLoaderCallback;
 
 import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;
 import static us.bridgeses.popularmovies.models.Poster.TOP_RATED_MODE;
@@ -34,21 +34,21 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
 
     private static final String TAG = "PosterPresenterFragment";
 
-    private PopularLoader popularLoader;
+    private MovieLoader movieLoader;
     private AdapterFactory adapterFactory;
     private PosterPresenterCallback callback;
     private PosterAdapter posterAdapter;
     private @Poster.SortMode int currSort = MOST_POPULAR_MODE;
     private int page = 1;
 
-    public static PosterPresenter getInstance(Activity context, PopularLoader popularLoader,
+    public static PosterPresenter getInstance(Activity context, MovieLoader movieLoader,
                                               AdapterFactory adapterFactory,
                                               PosterPresenterCallback callback) {
         FragmentManager fm = context.getFragmentManager();
         PosterPresenterFragment presenter = (PosterPresenterFragment)fm.findFragmentByTag(TAG);
         if (presenter == null) {
             presenter = new PosterPresenterFragment();
-            presenter.setPopularLoader(popularLoader);
+            presenter.setMovieLoader(movieLoader);
             presenter.setAdapterFactory(adapterFactory);
             fm.beginTransaction().add(presenter, TAG).commit();
         }
@@ -56,8 +56,8 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
         return presenter;
     }
 
-    public void setPopularLoader(PopularLoader popularLoader) {
-        this.popularLoader = popularLoader;
+    public void setMovieLoader(MovieLoader movieLoader) {
+        this.movieLoader = movieLoader;
     }
 
     public void setAdapterFactory(AdapterFactory adapterFactory) {
@@ -69,13 +69,13 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
     }
 
     public void refresh() {
-        if (popularLoader != null) {
+        if (movieLoader != null) {
             switch (currSort) {
                 case MOST_POPULAR_MODE:
-                    popularLoader.getPosters(this, MOST_POPULAR_MODE, page);
+                    movieLoader.getPosters(this, MOST_POPULAR_MODE, page);
                     break;
                 case TOP_RATED_MODE:
-                    popularLoader.getPosters(this, TOP_RATED_MODE, page);
+                    movieLoader.getPosters(this, TOP_RATED_MODE, page);
                     break;
             }
         }
@@ -127,8 +127,8 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
         if (cache != null) {
             cache.flush();
         }
-        if (popularLoader != null) {
-            popularLoader.cancel();
+        if (movieLoader != null) {
+            movieLoader.cancel();
         }
         super.onDestroy();
     }
@@ -171,14 +171,14 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
     public void changeSort(@Poster.SortMode int newSort) {
         if (currSort != newSort) {
             currSort = newSort;
-            if (popularLoader != null) {
+            if (movieLoader != null) {
                 page = 1;
-                popularLoader.getPosters(this, newSort, page);
+                movieLoader.getPosters(this, newSort, page);
                 posterAdapter = null;
                 page = 0;
             }
             else {
-                throw new IllegalStateException("No PopularLoader set");
+                throw new IllegalStateException("No MovieLoader set");
             }
         }
     }

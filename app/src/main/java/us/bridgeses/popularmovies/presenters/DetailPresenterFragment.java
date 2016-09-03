@@ -8,11 +8,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.net.http.HttpResponseCache;
 import android.os.Bundle;
-import android.support.annotation.IdRes;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,30 +23,33 @@ import us.bridgeses.popularmovies.adapters.RecyclerTrailerAdapter;
 import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Trailer;
-import us.bridgeses.popularmovies.networking.DetailsLoaderCallback;
-import us.bridgeses.popularmovies.networking.PopularLoader;
-import us.bridgeses.popularmovies.networking.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.persistence.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.persistence.MovieLoader;
+import us.bridgeses.popularmovies.persistence.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.persistence.PersistenceHelper;
 
 /**
  * Created by Tony on 8/27/2016.
  */
 public class DetailPresenterFragment extends Fragment implements DetailsLoaderCallback,
         TrailerLoaderCallback, RecyclerTrailerAdapter.TrailerClickCallback,
-        DetailPresenter {
+        DetailPresenter, CheckBox.OnCheckedChangeListener {
 
     @SuppressWarnings("unused")
     private static final String TAG = "DetailPresenterFragment";
 
-    private PopularLoader popularLoader;
+    private MovieLoader movieLoader;
     private MovieDetail movieDetail;
-    private Trailer firstTrailer;
+    private List<Trailer> trailers;
     private Intent shareIntent;
     private DetailPresenterCallback callback;
     private TrailerAdapter adapter;
+    private PersistenceHelper persistenceHelper;
 
     public static DetailPresenterFragment getInstance(Activity activity,
                                                       DetailPresenterCallback callback,
-                                                      PopularLoader popularLoader) {
+                                                      MovieLoader movieLoader,
+                                                      PersistenceHelper persistenceHelper) {
         FragmentManager fm = activity.getFragmentManager();
         DetailPresenterFragment fragment = (DetailPresenterFragment) fm.findFragmentByTag(TAG);
         if (fragment == null) {
@@ -53,7 +57,8 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
             fm.beginTransaction().add(fragment, TAG).commit();
         }
         fragment.setCallback(callback);
-        fragment.popularLoader = popularLoader;
+        fragment.setMovieLoader(movieLoader);
+        fragment.setPersistenceHelper(persistenceHelper);
         return fragment;
     }
 
@@ -88,21 +93,21 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
         if (cache != null) {
             cache.flush();
         }
-        if (popularLoader != null) {
-            popularLoader.cancel();
+        if (movieLoader != null) {
+            movieLoader.cancel();
         }
         super.onDestroy();
     }
 
-    public void setPopularLoader(PopularLoader popularLoader) {
-        this.popularLoader = popularLoader;
+    public void setMovieLoader(MovieLoader movieLoader) {
+        this.movieLoader = movieLoader;
     }
 
     public void loadDetail(long id) {
         Log.d(TAG, "loadDetail: ");
-        if (popularLoader != null) {
-            popularLoader.getDetails(this, id);
-            popularLoader.getTrailers(this, id);
+        if (movieLoader != null) {
+            movieLoader.getDetails(this, id);
+            movieLoader.getTrailers(this, id);
         }
     }
 
@@ -126,7 +131,7 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
 
     @Override
     public void onReturnTrailers(List<Trailer> trailers) {
-        firstTrailer = trailers.get(0);
+        this.trailers = trailers;
         Log.d(TAG, "onReturnTrailers: setting adapter with size " + trailers.size());
         adapter = new RecyclerTrailerAdapter(getActivity(), trailers);
         adapter.setCallback(this);
@@ -153,11 +158,11 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
     }
 
     private String createText() {
-        return firstTrailer.getVideo_path().toString() + "\n\n" + "Shared from Popular Movies by Building Bridges";
+        return trailers.get(0).getVideo_path().toString() + "\n\n" + "Shared from Popular Movies by Building Bridges";
     }
 
     private String createSubject() {
-        return movieDetail.getTitle() + ": " + firstTrailer.getTitle();
+        return movieDetail.getTitle() + ": " + trailers.get(0).getTitle();
     }
 
     public void setCallback(DetailPresenterCallback callback) {
@@ -172,5 +177,19 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
             callback.setMovieDetail(movieDetail);
             callback.setAdapter(adapter);
         }
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if (isChecked) {
+            persistenceHelper.saveFavorite(movieDetail, trailers);
+        }
+        else {
+            persistenceHelper.deleteFavorite(movieDetail.getId());
+        }
+    }
+
+    public void setPersistenceHelper(PersistenceHelper persistenceHelper) {
+        this.persistenceHelper = persistenceHelper;
     }
 }

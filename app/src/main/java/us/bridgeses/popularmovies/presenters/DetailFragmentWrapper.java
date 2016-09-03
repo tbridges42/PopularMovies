@@ -1,11 +1,13 @@
 package us.bridgeses.popularmovies.presenters;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.net.Uri;
 import android.support.annotation.IdRes;
 import android.util.Log;
 
-import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
+import us.bridgeses.popularmovies.persistence.networking.TmdbMovieLoader;
+import us.bridgeses.popularmovies.persistence.ImageSaver;
+import us.bridgeses.popularmovies.persistence.PersistenceHelperImpl;
 import us.bridgeses.popularmovies.views.MovieView;
 import us.bridgeses.popularmovies.views.MovieViewFragment;
 
@@ -26,7 +28,18 @@ public class DetailFragmentWrapper implements MovieDetailViewer {
         if (presenter == null) {
 
             presenter = DetailPresenterFragment.getInstance(activity,
-                    (DetailPresenterCallback) movieView, new TmdbPopularLoader(activity));
+                    (DetailPresenterCallback) movieView, new TmdbMovieLoader(activity),
+                    new PersistenceHelperImpl(activity.getContentResolver(), new ImageSaver() {
+                        @Override
+                        public Uri saveImage(Uri uri) {
+                            return uri;
+                        }
+
+                        @Override
+                        public void deleteImage(Uri uri) {
+
+                        }
+                    }));
         }
         if (movieView == null) {
             movieView = MovieViewFragment.getInstance(activity, resId);
@@ -40,7 +53,18 @@ public class DetailFragmentWrapper implements MovieDetailViewer {
         Log.d(TAG, "loadCached: ");
         if (presenter == null) {
             presenter = DetailPresenterFragment.getInstance(activity,
-                    (DetailPresenterCallback) movieView, new TmdbPopularLoader(activity));
+                    (DetailPresenterCallback) movieView, new TmdbMovieLoader(activity),
+                    new PersistenceHelperImpl(activity.getContentResolver(), new ImageSaver() {
+                        @Override
+                        public Uri saveImage(Uri uri) {
+                            return uri;
+                        }
+
+                        @Override
+                        public void deleteImage(Uri uri) {
+
+                        }
+                    }));
         }
         if (movieView == null) {
             movieView = MovieViewFragment.getInstance(activity, 0);

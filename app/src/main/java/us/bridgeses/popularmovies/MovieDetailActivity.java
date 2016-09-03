@@ -3,10 +3,13 @@ package us.bridgeses.popularmovies;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import us.bridgeses.popularmovies.persistence.networking.TmdbMovieLoader;
+import us.bridgeses.popularmovies.persistence.ImageSaver;
+import us.bridgeses.popularmovies.persistence.PersistenceHelperImpl;
 import us.bridgeses.popularmovies.views.MovieViewFragment;
-import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
 import us.bridgeses.popularmovies.presenters.DetailPresenterFragment;
 
 /**
@@ -30,7 +33,18 @@ public class MovieDetailActivity extends Activity {
 
         MovieViewFragment movieView = MovieViewFragment.getInstance(this, R.id.detail_parent);
 
-        presenter = DetailPresenterFragment.getInstance(this, movieView, new TmdbPopularLoader(this));
+        presenter = DetailPresenterFragment.getInstance(this, movieView, new TmdbMovieLoader(this),
+                new PersistenceHelperImpl(getContentResolver(), new ImageSaver() {
+                    @Override
+                    public Uri saveImage(Uri uri) {
+                        return uri;
+                    }
+
+                    @Override
+                    public void deleteImage(Uri uri) {
+
+                    }
+                }));
         presenter.loadDetail(id);
     }
 }

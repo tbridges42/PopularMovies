@@ -3,13 +3,12 @@ package us.bridgeses.popularmovies;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.RecyclerAdapterFactory;
 import us.bridgeses.popularmovies.models.Poster;
-import us.bridgeses.popularmovies.networking.TmdbPopularLoader;
+import us.bridgeses.popularmovies.persistence.networking.TmdbMovieLoader;
 import us.bridgeses.popularmovies.presenters.DetailViewerFactory;
 import us.bridgeses.popularmovies.presenters.MovieDetailViewer;
 import us.bridgeses.popularmovies.presenters.PosterPresenter;
@@ -65,7 +64,7 @@ public class PosterActivity extends Activity
     private void setupPresenter() {
         Log.d(TAG, "setupPresenter: ");
         presenter = PosterPresenterFragment.getInstance(this,
-                new TmdbPopularLoader(this),
+                new TmdbMovieLoader(this),
                 new RecyclerAdapterFactory(this),
                 this);
         loadAdapter();

@@ -3,14 +3,14 @@ package us.bridgeses.popularmovies.presenters;
 import us.bridgeses.popularmovies.adapters.AdapterFactory;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.models.Poster;
-import us.bridgeses.popularmovies.networking.PopularLoader;
+import us.bridgeses.popularmovies.persistence.MovieLoader;
 
 /**
  * Created by tbrid on 8/29/2016.
  */
 public interface PosterPresenter {
 
-    void setPopularLoader(PopularLoader loader);
+    void setMovieLoader(MovieLoader loader);
 
     void setAdapterFactory(AdapterFactory factory);
 

@@ -1,6 +1,7 @@
 package us.bridgeses.popularmovies.presenters;
 
 import android.content.Intent;
+import android.widget.CheckBox;
 
 import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
@@ -15,4 +16,6 @@ public interface DetailPresenterCallback {
     void setAdapter(TrailerAdapter adapter);
 
     void setShareIntent(Intent shareIntent);
+
+    void setFavoriteListener(CheckBox.OnCheckedChangeListener listener);
 }

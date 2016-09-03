@@ -16,12 +16,14 @@ import java.util.Locale;
 public class MovieDetail implements Parcelable {
 
     public static final SimpleDateFormat defaultFormat = new SimpleDateFormat("yyyy-mm-dd", Locale.US);
-
+    // Add id
     private final String title;
     private final Calendar releaseDate;
     private final Poster poster;
     private final float rating;
     private final String synopsis;
+    private final boolean favorite;
+    private long id;
 
     public String getTitle() {
         return title;
@@ -43,13 +45,20 @@ public class MovieDetail implements Parcelable {
         return synopsis;
     }
 
-    public MovieDetail(String title, Calendar releaseDate, Poster poster, float rating,
+    public MovieDetail(long id, String title, Calendar releaseDate, Poster poster, float rating,
                        String synopsis) {
+        this(id, title, releaseDate, poster, rating, synopsis, false);
+    }
+
+    public MovieDetail(long id, String title, Calendar releaseDate, Poster poster, float rating,
+                       String synopsis, boolean favorite) {
+        this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
         this.poster = poster;
         this.rating = rating;
         this.synopsis = synopsis;
+        this.favorite = favorite;
     }
 
     protected MovieDetail(Parcel in) {
@@ -65,6 +74,7 @@ public class MovieDetail implements Parcelable {
         this.poster = in.readParcelable(Poster.class.getClassLoader());
         this.rating = in.readFloat();
         this.synopsis = in.readString();
+        this.favorite = in.readInt() == 1;
     }
 
     @Override
@@ -79,6 +89,7 @@ public class MovieDetail implements Parcelable {
         dest.writeParcelable(poster, flags);
         dest.writeFloat(rating);
         dest.writeString(synopsis);
+        dest.writeInt(favorite ? 1 : 0);
     }
 
     public static final Creator<MovieDetail> CREATOR = new Creator<MovieDetail>() {
@@ -92,4 +103,8 @@ public class MovieDetail implements Parcelable {
             return new MovieDetail[size];
         }
     };
+
+    public long getId() {
+        return id;
+    }
 }

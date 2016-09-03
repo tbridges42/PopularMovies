@@ -12,6 +12,17 @@ public class Trailer {
     private Uri video_path;
     private Uri thumbnail_path;
 
+    public Trailer() {
+
+    }
+
+    public Trailer(long id, String title, Uri video_path, Uri thumbnail_path) {
+        this.id = id;
+        this.title = title;
+        this.video_path = video_path;
+        this.thumbnail_path = thumbnail_path;
+    }
+
     public long getId() {
         return id;
     }

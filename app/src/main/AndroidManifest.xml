@@ -19,6 +19,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MovieDetailActivity" />
+        <provider
+            android:authorities="us.bridgeses.popularmovies.provider"
+            android:name=".persistence.MovieProvider"
+            android:exported="false" />
     </application>
 
 </manifest>

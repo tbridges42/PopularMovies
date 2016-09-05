@@ -48,6 +48,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
     private ShareActionProvider shareActionProvider;
     private TrailerAdapter cachedAdapter;
     private Intent cachedIntent;
+    private MenuItem item;
 
     public static MovieViewFragment getInstance(Activity activity, @IdRes int res) {
         FragmentManager fm = activity.getFragmentManager();
@@ -108,7 +109,7 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
         Log.d(TAG, "onCreateOptionsMenu: ");
         inflater.inflate(R.menu.detail_menu, menu);
 
-        MenuItem item = menu.findItem(R.id.menu_share);
+        item = menu.findItem(R.id.menu_share);
 
         shareActionProvider = (ShareActionProvider) item.getActionProvider();
         if (cachedIntent == null) {
@@ -117,7 +118,13 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
             shareActionProvider.setShareIntent(shareIntent);
         }
         else {
-            shareActionProvider.setShareIntent(cachedIntent);
+            if (cachedIntent.getStringExtra(Intent.EXTRA_SUBJECT).isEmpty()) {
+                item.setVisible(false);
+            }
+            else {
+                shareActionProvider.setShareIntent(cachedIntent);
+                item.setVisible(true);
+            }
         }
     }
 
@@ -149,7 +156,13 @@ public class MovieViewFragment extends Fragment implements MovieView, DetailPres
     @Override
     public void setShareIntent(Intent intent) {
         if (shareActionProvider != null) {
-            shareActionProvider.setShareIntent(intent);
+            if (intent.getStringExtra(Intent.EXTRA_SUBJECT).isEmpty()) {
+                item.setVisible(false);
+            }
+            else {
+                item.setVisible(true);
+                shareActionProvider.setShareIntent(intent);
+            }
         }
         else {
             cachedIntent = intent;

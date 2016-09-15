@@ -4,21 +4,22 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.IntDef;
-import android.support.annotation.NonNull;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Created by Tony on 8/6/2016.
+ * A model representing a poster and containing relevant information
  */
 public class Poster implements Parcelable {
 
-    @IntDef({MOST_POPULAR_MODE, TOP_RATED_MODE})
+    // TODO: Does this really make sense here?
+    // A psuedo-Enum of sort modes
+    @IntDef({MOST_POPULAR_MODE, TOP_RATED_MODE, FAVORITED_MODE})
     public @interface SortMode {}
-
     public static final int MOST_POPULAR_MODE = 0;
     public static final int TOP_RATED_MODE = 1;
+    public static final int FAVORITED_MODE = 2;
 
     public static final int THUMBNAIL_WIDTH = 342;
 
@@ -27,6 +28,7 @@ public class Poster implements Parcelable {
     private long id;
     private boolean favorite;
 
+    //<editor-fold desc="xtors">
     public Poster(Uri imageUri, String contentDescription, long id) {
         this(imageUri, contentDescription, id, false);
     }
@@ -37,27 +39,10 @@ public class Poster implements Parcelable {
         this.id = id;
         this.favorite = favorite;
     }
-
-    public static Poster fromJson(JSONObject json) {
-        try {
-            return new Poster(
-                    Uri.parse("http://image.tmdb.org/t/p/w185/" + json.getString("poster_path")),
-                    json.getString("title"),
-                    json.getLong("id")
-            );
-        }
-        catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    //</editor-fold>
 
     public Uri getImageUri() {
         return imageUri;
-    }
-
-    public String getContentDescription() {
-        return contentDescription;
     }
 
     public long getId() {
@@ -68,8 +53,17 @@ public class Poster implements Parcelable {
         return favorite;
     }
 
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    //<editor-fold desc="Parcelable">
     protected Poster(Parcel in) {
         this(Uri.parse(in.readString()), in.readString(), in.readLong(), in.readInt() == 1);
+    }
+
+    public String getContentDescription() {
+        return contentDescription;
     }
 
     public static final Creator<Poster> CREATOR = new Creator<Poster>() {
@@ -96,4 +90,5 @@ public class Poster implements Parcelable {
         dest.writeLong(id);
         dest.writeInt(favorite ? 1 : 0);
     }
+    //</editor-fold>
 }

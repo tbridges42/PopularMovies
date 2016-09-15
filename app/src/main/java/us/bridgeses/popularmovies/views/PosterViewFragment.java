@@ -16,7 +16,8 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import us.bridgeses.popularmovies.R;
-import us.bridgeses.popularmovies.adapters.EndlessScrollListener;
+import us.bridgeses.popularmovies.adapters.implementations.EndlessScrollListener;
+import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.models.Poster;
 
 /**
@@ -95,6 +96,10 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
         else {
             cachedAdapter = adapter;
         }
+    }
+
+    public void updateFavorite(long id, boolean favorite) {
+        ((PosterAdapter)posterView.getAdapter()).updateFavorite(id, favorite);
     }
 
     @Override

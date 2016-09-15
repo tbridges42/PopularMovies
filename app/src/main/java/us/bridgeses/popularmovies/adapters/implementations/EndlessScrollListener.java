@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.adapters;
+package us.bridgeses.popularmovies.adapters.implementations;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,7 +7,8 @@ import android.support.v7.widget.RecyclerView.OnScrollListener;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 
 /**
- * Created by Tony on 8/19/2016.
+ * A scroll listener that calls for a new page when reaching the end of the adapter.
+ * Subclasses must implement onLoadMore to fetch more data.
  */
 public abstract class EndlessScrollListener extends OnScrollListener {
     // The minimum amount of items to have below your current scroll position

@@ -1,11 +1,13 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.persistence.implementations;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import us.bridgeses.popularmovies.persistence.MoviesContract;
+
 /**
- * Created by Tony on 8/31/2016.
+ * An implementatio of {@link SQLiteOpenHelper} that implements {@link MoviesContract}
  */
 public class DBHelper extends SQLiteOpenHelper implements MoviesContract {
 
@@ -27,9 +29,16 @@ public class DBHelper extends SQLiteOpenHelper implements MoviesContract {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // No version changes yet
+        // Change this behavior before release
+        // STOPSHIP: 9/5/2016
+        db.execSQL("DROP TABLE " + MOVIES_TABLE);
+        db.execSQL("DROP TABLE " + TRAILERS_TABLE);
+        onCreate(db);
     }
 
+    // By combining the schema version and database version bitwise, we ensure that if either
+    // version increments, the database will be upgraded. What has been upgraded can be determined
+    // by using the unpacking methods below
     private static int packVersions(int schemaVersion, int databaseVersion) {
         return schemaVersion << 16 | databaseVersion;
     }

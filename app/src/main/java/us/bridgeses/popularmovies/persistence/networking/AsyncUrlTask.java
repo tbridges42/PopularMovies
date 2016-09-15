@@ -1,6 +1,5 @@
 package us.bridgeses.popularmovies.persistence.networking;
 
-import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -13,31 +12,35 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Created by tbrid on 8/27/2016.
+ * An implementation of AsyncTask for retrieving JSON information from a URL
  */
 public abstract class AsyncUrlTask<A> extends AsyncTask<String, Void, A> {
 
+    @SuppressWarnings("unused")
     private static final String TAG = "AsyncUrlTask";
 
     @IntDef({OK, CONNECTIVITY_ERROR, SERVER_ERROR})
     @interface UrlError {}
-
     public static final int OK = 0;
     public static final int CONNECTIVITY_ERROR = 1;
     public static final int SERVER_ERROR = 2;
 
-    @UrlError int urlError = OK;
-    private Context context;
+    protected interface DoneListener {
+        void done();
+    }
 
-    public AsyncUrlTask(Context context) {
-        this.context = context.getApplicationContext();
+    @UrlError int urlError = OK;
+    private ConnectivityManager connMgr;
+    private DoneListener doneListener;
+
+    public AsyncUrlTask(ConnectivityManager connMgr, DoneListener doneListener) {
+        this.connMgr = connMgr;
+        this.doneListener = doneListener;
     }
 
     @Override
     protected A doInBackground(String... params) {
         Log.d("url", params[0]);
-        ConnectivityManager connMgr = (ConnectivityManager)
-                context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             try {
@@ -68,14 +71,10 @@ public abstract class AsyncUrlTask<A> extends AsyncTask<String, Void, A> {
 
     @Override
     protected void onPostExecute(A results) {
-        Log.d(TAG, "onPostExecute: Returning with posters");
         switch (urlError) {
             case OK:
                 if (results != null) {
                     handleSuccess(results);
-                }
-                else {
-                    Log.d(TAG, "onPostExecute: No results returned");
                 }
                 break;
             case CONNECTIVITY_ERROR:
@@ -84,6 +83,9 @@ public abstract class AsyncUrlTask<A> extends AsyncTask<String, Void, A> {
             case SERVER_ERROR:
                 handleRemoteError();
                 break;
+        }
+        if (doneListener != null) {
+            doneListener.done();
         }
     }
 

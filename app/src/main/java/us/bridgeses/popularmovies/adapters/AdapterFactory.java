@@ -5,9 +5,12 @@ import java.util.List;
 import us.bridgeses.popularmovies.models.Poster;
 
 /**
- * Created by tbrid on 8/29/2016.
+ * An interface for a factory that returns a Poster Adapter
  */
 public interface AdapterFactory {
 
+    /**
+     * Return an initialized PosterAdapter
+     */
     PosterAdapter getAdapter(List<Poster> posters);
 }

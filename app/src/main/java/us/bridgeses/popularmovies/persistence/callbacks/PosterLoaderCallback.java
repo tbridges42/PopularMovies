@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.persistence.callbacks;
 
 import java.util.List;
 

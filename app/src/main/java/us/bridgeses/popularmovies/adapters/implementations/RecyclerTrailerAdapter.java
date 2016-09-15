@@ -1,7 +1,5 @@
-package us.bridgeses.popularmovies.adapters;
+package us.bridgeses.popularmovies.adapters.implementations;
 
-import android.content.Context;
-import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,24 +12,22 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import us.bridgeses.popularmovies.R;
+import us.bridgeses.popularmovies.adapters.TrailerAdapter;
+import us.bridgeses.popularmovies.adapters.TrailerClickCallback;
 import us.bridgeses.popularmovies.models.Trailer;
 
 /**
- * Created by Tony on 8/27/2016.
+ * An implementation of {@link TrailerAdapter} suitable for use with {@link RecyclerView}s
  */
 public class RecyclerTrailerAdapter extends RecyclerView.Adapter<RecyclerTrailerAdapter.TrailerHolder>
             implements TrailerAdapter {
 
     private List<Trailer> trailers;
-    private Context context;
+    private Picasso picasso;
     private TrailerClickCallback callback;
 
-    public interface TrailerClickCallback {
-        void onTrailerClick(Uri trailerUri);
-    }
-
-    public RecyclerTrailerAdapter(Context context, List<Trailer> trailers) {
-        this.context = context;
+    public RecyclerTrailerAdapter(Picasso picasso, List<Trailer> trailers) {
+        this.picasso = picasso;
         this.trailers = trailers;
     }
 
@@ -39,6 +35,7 @@ public class RecyclerTrailerAdapter extends RecyclerView.Adapter<RecyclerTrailer
         this.callback = callback;
     }
 
+    //<editor-fold desc="RecyclerView.Adapter methods">
     @Override
     public TrailerHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext())
@@ -49,7 +46,6 @@ public class RecyclerTrailerAdapter extends RecyclerView.Adapter<RecyclerTrailer
     @Override
     public void onBindViewHolder(TrailerHolder holder, int position) {
         holder.thumbnail.setContentDescription(trailers.get(position).getTitle());
-        Picasso picasso = Picasso.with(context);
         picasso.load(trailers.get(position).getThumbnail_path())
                 .placeholder(R.drawable.loading).into(holder.thumbnail);
         holder.title.setText(trailers.get(position).getTitle());
@@ -59,6 +55,7 @@ public class RecyclerTrailerAdapter extends RecyclerView.Adapter<RecyclerTrailer
     public int getItemCount() {
         return trailers.size();
     }
+    //</editor-fold>
 
     class TrailerHolder extends RecyclerView.ViewHolder {
 

@@ -1,7 +1,7 @@
 package us.bridgeses.popularmovies.adapters;
 
 /**
- * Created by tbrid on 8/29/2016.
+ * A callback interface for handling clicks on posters
  */
 public interface PosterClickListener {
 

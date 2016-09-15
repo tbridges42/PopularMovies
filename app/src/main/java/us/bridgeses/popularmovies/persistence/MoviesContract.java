@@ -9,7 +9,8 @@ import android.provider.BaseColumns;
  */
 public interface MoviesContract {
 
-    int SCHEMA_VERSION = 1;
+    // Increment this after every change
+    int SCHEMA_VERSION = 2;
 
     String CONTENT_AUTHORITY = "us.bridgeses.popularmovies.provider";
     Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
@@ -46,7 +47,8 @@ public interface MoviesContract {
         String COLUMN_SYNOPSIS = "synopsis";
         String TYPE_SYNOPSIS = " TEXT";
 
-        String COLUMN_DECLARATION = COLUMN_TITLE + TYPE_TITLE + ", "
+        String COLUMN_DECLARATION = _ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_TITLE + TYPE_TITLE + ", "
                 + COLUMN_RELEASE + TYPE_RELEASE_TYPE + ", "
                 + COLUMN_POSTER + TYPE_POSTER + ", "
                 + COLUMN_RATING + TYPE_RATING + ", "
@@ -79,7 +81,7 @@ public interface MoviesContract {
                 + "/"
                 + TRAILERS_TABLE;
 
-        String MUTLIPLE_TRAILERS_TYPE =
+        String MULTIPLE_TRAILERS_TYPE =
                 "vnd.android.cursor.dir/"
                 + CONTENT_AUTHORITY
                 + "/"
@@ -99,7 +101,8 @@ public interface MoviesContract {
                 + "(" + _ID + ")"
                 + " ON DELETE CASCADE";
 
-        String COLUMN_DECLARATION = COLUMN_TITLE + TYPE_TITLE + ", "
+        String COLUMN_DECLARATION = _ID + " INTEGER PRIMARY KEY, "
+                + COLUMN_TITLE + TYPE_TITLE + ", "
                 + COLUMN_VIDEO_PATH + TYPE_VIDEO_PATH + ", "
                 + COLUMN_THUMB_PATH + TYPE_THUMB_PATH +", "
                 + COLUMN_MOVIE_ID + TYPE_MOVIE_ID;

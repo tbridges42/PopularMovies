@@ -7,21 +7,26 @@ import android.support.annotation.NonNull;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.Locale;
 
 /**
- * Created by Tony on 8/6/2016.
+ * A model class representing a movie and containing related information
  */
 public class MovieDetail implements Parcelable {
 
-    public static final SimpleDateFormat defaultFormat = new SimpleDateFormat("yyyy-mm-dd", Locale.US);
-    // Add id
+    // A format for storage and retrieval, based off of the date format in TMDB.
+    // This format is never translated, and should not be used for display.
+    public static final SimpleDateFormat defaultFormat =
+            new SimpleDateFormat("yyyy-mm-dd", Locale.US);
+
     private final String title;
     private final Calendar releaseDate;
     private final Poster poster;
     private final float rating;
     private final String synopsis;
+    private final boolean favorite;
+    private long id;
+    private boolean adult;
 
     public boolean isFavorite() {
         return favorite;
@@ -30,9 +35,6 @@ public class MovieDetail implements Parcelable {
     public void setId(long id) {
         this.id = id;
     }
-
-    private final boolean favorite;
-    private long id;
 
     public String getTitle() {
         return title;
@@ -54,6 +56,19 @@ public class MovieDetail implements Parcelable {
         return synopsis;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public boolean isAdult() {
+        return adult;
+    }
+
+    public void setAdult(boolean adult) {
+        this.adult = adult;
+    }
+
+    //<editor-fold desc="xtors">
     public MovieDetail(long id, String title, Calendar releaseDate, Poster poster, float rating,
                        String synopsis) {
         this(id, title, releaseDate, poster, rating, synopsis, false);
@@ -61,6 +76,11 @@ public class MovieDetail implements Parcelable {
 
     public MovieDetail(long id, String title, Calendar releaseDate, Poster poster, float rating,
                        String synopsis, boolean favorite) {
+        this(id, title, releaseDate, poster, rating, synopsis, favorite, false);
+    }
+
+    public MovieDetail(long id, String title, Calendar releaseDate, Poster poster, float rating,
+                       String synopsis, boolean favorite, boolean adult) {
         this.id = id;
         this.title = title;
         this.releaseDate = releaseDate;
@@ -68,8 +88,11 @@ public class MovieDetail implements Parcelable {
         this.rating = rating;
         this.synopsis = synopsis;
         this.favorite = favorite;
+        this.adult = adult;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Parcelable">
     protected MovieDetail(Parcel in) {
         this.title = in.readString();
         Calendar cal = Calendar.getInstance();
@@ -84,6 +107,7 @@ public class MovieDetail implements Parcelable {
         this.rating = in.readFloat();
         this.synopsis = in.readString();
         this.favorite = in.readInt() == 1;
+        this.adult = in.readInt() == 1;
     }
 
     @Override
@@ -99,6 +123,7 @@ public class MovieDetail implements Parcelable {
         dest.writeFloat(rating);
         dest.writeString(synopsis);
         dest.writeInt(favorite ? 1 : 0);
+        dest.writeInt(adult ? 1 : 0);
     }
 
     public static final Creator<MovieDetail> CREATOR = new Creator<MovieDetail>() {
@@ -112,8 +137,5 @@ public class MovieDetail implements Parcelable {
             return new MovieDetail[size];
         }
     };
-
-    public long getId() {
-        return id;
-    }
+    //</editor-fold>
 }

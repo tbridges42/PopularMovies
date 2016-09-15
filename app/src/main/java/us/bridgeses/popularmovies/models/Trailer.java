@@ -3,7 +3,7 @@ package us.bridgeses.popularmovies.models;
 import android.net.Uri;
 
 /**
- * Created by tbrid on 8/27/2016.
+ * A model class representing a trailer
  */
 public class Trailer {
 

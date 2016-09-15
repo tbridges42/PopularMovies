@@ -15,7 +15,7 @@ public class DetailActivityWrapper implements MovieDetailViewer {
     public void load(Activity activity, @IdRes int resId, long id) {
         Intent intent = new Intent(activity, MovieDetailActivity.class);
         intent.putExtra("id", id);
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, 0);
     }
 
     @Override

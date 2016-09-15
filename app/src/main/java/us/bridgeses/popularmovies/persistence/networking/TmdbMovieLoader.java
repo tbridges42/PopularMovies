@@ -1,6 +1,6 @@
 package us.bridgeses.popularmovies.persistence.networking;
 
-import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.JsonReader;
@@ -14,20 +14,20 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.models.Trailer;
-import us.bridgeses.popularmovies.persistence.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.persistence.callbacks.DetailsLoaderCallback;
 import us.bridgeses.popularmovies.persistence.MovieLoader;
-import us.bridgeses.popularmovies.persistence.PosterLoaderCallback;
-import us.bridgeses.popularmovies.persistence.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.persistence.callbacks.TrailerLoaderCallback;
 
+import static us.bridgeses.popularmovies.models.Poster.FAVORITED_MODE;
 import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;
 import static us.bridgeses.popularmovies.models.Poster.TOP_RATED_MODE;
 
 /**
- * Created by Tony on 8/7/2016.
+ * An implementation of {@link MovieLoader} that retrieves data from TMDB
  */
 public class TmdbMovieLoader implements MovieLoader {
 
@@ -39,7 +39,25 @@ public class TmdbMovieLoader implements MovieLoader {
     public static final String API_KEY = "?api_key=";
     public static final String PAGE = "&page=";
     public static final String VIDEOS = "/videos";
+    public static final String LANGUAGE = "&language=";
     public static final int MAX_PAGE = 1000;
+
+    private String apiKey;
+    private final String lang;
+    private ConnectivityManager connMgr;
+    private UrlDetailFetcher activeDetailFetcher;
+    private UrlPosterFetcher activePosterFetcher;
+    private UrlTrailerFetcher activeTrailerFetcher;
+
+    public TmdbMovieLoader(ConnectivityManager connMgr, String apiKey) {
+        this(connMgr, apiKey, "es");
+    }
+
+    public TmdbMovieLoader(ConnectivityManager connMgr, String apiKey, String lang) {
+        this.connMgr = connMgr;
+        this.apiKey = apiKey;
+        this.lang = lang;
+    }
 
     @Override
     public void getPosters(@NonNull PosterLoaderCallback callback,
@@ -47,50 +65,80 @@ public class TmdbMovieLoader implements MovieLoader {
         if (page <= 0 || page > MAX_PAGE) {
             return;
         }
+        if (activePosterFetcher != null) {
+            activePosterFetcher.cancel(true);
+        }
+        AsyncUrlTask.DoneListener doneListener = new AsyncUrlTask.DoneListener() {
+            @Override
+            public void done() {
+                activePosterFetcher = null;
+            }
+        };
         switch (mode) {
-            case MOST_POPULAR_MODE: new UrlPosterFetcher(callback, context).execute(
-                    BASE_URL + POPULAR_URL + API_KEY +
-                    context.getResources().getString(R.string.imdb_api_key)
-                    + PAGE + page);
+            case MOST_POPULAR_MODE: 
+                activePosterFetcher = new UrlPosterFetcher(callback, connMgr, doneListener);
+                activePosterFetcher.execute(BASE_URL + POPULAR_URL + API_KEY + apiKey + PAGE + page
+                + LANGUAGE + lang);
                 break;
-            case TOP_RATED_MODE: new UrlPosterFetcher(callback, context).execute(
-                    BASE_URL + TOP_RATED_URL + API_KEY +
-                            context.getResources().getString(R.string.imdb_api_key)
-                    + PAGE + page);
+            case TOP_RATED_MODE: 
+                activePosterFetcher = new UrlPosterFetcher(callback, connMgr, doneListener);
+                activePosterFetcher.execute(BASE_URL + TOP_RATED_URL + API_KEY +apiKey + PAGE + page
+                        + LANGUAGE + lang);
+                break;
+            case FAVORITED_MODE:
+                // Shouldn't be here
                 break;
         }
     }
 
     @Override
     public void getDetails(@NonNull DetailsLoaderCallback callback, long id) {
-        new UrlDetailFetcher(callback, context).execute(BASE_URL + Long.toString(id) +
-        API_KEY + context.getResources().getString(R.string.imdb_api_key));
+        AsyncUrlTask.DoneListener doneListener = new AsyncUrlTask.DoneListener() {
+            @Override
+            public void done() {
+                activeDetailFetcher = null;
+            }
+        };
+        activeDetailFetcher = new UrlDetailFetcher(callback, connMgr, doneListener);
+        activeDetailFetcher.execute(BASE_URL + Long.toString(id) + API_KEY + apiKey
+                + LANGUAGE + lang);
     }
 
+    @Override
     public void getTrailers(@NonNull TrailerLoaderCallback callback, long id) {
-        new UrlTrailerFetcher(context, callback).execute(
-                BASE_URL + Long.toString(id) + VIDEOS + API_KEY
-                        + context.getResources().getString(R.string.imdb_api_key)
-        );
+        AsyncUrlTask.DoneListener doneListener = new AsyncUrlTask.DoneListener() {
+            @Override
+            public void done() {
+                activeTrailerFetcher = null;
+            }
+        };
+        activeTrailerFetcher = new UrlTrailerFetcher(callback, connMgr, doneListener);
+        activeTrailerFetcher.execute(BASE_URL + Long.toString(id) + VIDEOS + API_KEY + apiKey
+                + LANGUAGE + lang);
     }
 
     @Override
     public void cancel() {
-
+        if (activeTrailerFetcher != null) {
+            activeTrailerFetcher.cancel(true);
+        }
+        if (activePosterFetcher != null) {
+            activePosterFetcher.cancel(true);
+        }
+        if (activeDetailFetcher != null) {
+            activeDetailFetcher.cancel(true);
+        }
     }
 
-    private Context context;
 
-    public TmdbMovieLoader(Context context) {
-        this.context = context;
-    }
 
     private static class UrlDetailFetcher extends AsyncUrlTask<MovieDetail> {
 
         private DetailsLoaderCallback callback;
 
-        public UrlDetailFetcher(DetailsLoaderCallback callback, Context context) {
-            super(context);
+        public UrlDetailFetcher(DetailsLoaderCallback callback, ConnectivityManager connMgr,
+                                DoneListener doneListener) {
+            super(connMgr, doneListener);
             this.callback = callback;
         }
 
@@ -166,8 +214,9 @@ public class TmdbMovieLoader implements MovieLoader {
 
         private PosterLoaderCallback callback;
 
-        public UrlPosterFetcher(PosterLoaderCallback callback, Context context) {
-            super(context);
+        public UrlPosterFetcher(PosterLoaderCallback callback, ConnectivityManager connMgr,
+                                DoneListener doneListener) {
+            super(connMgr, doneListener);
             this.callback = callback;
         }
 
@@ -241,8 +290,9 @@ public class TmdbMovieLoader implements MovieLoader {
 
         TrailerLoaderCallback callback;
 
-        public UrlTrailerFetcher(Context context, TrailerLoaderCallback callback) {
-            super(context);
+        public UrlTrailerFetcher(TrailerLoaderCallback callback, ConnectivityManager connMgr,
+                                 DoneListener doneListener) {
+            super(connMgr, doneListener);
             this.callback = callback;
         }
 

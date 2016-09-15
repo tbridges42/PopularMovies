@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.persistence.callbacks;
 
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.persistence.networking.ServiceCallback;

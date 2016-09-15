@@ -2,14 +2,17 @@ package us.bridgeses.popularmovies.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.widget.ListAdapter;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import us.bridgeses.popularmovies.adapters.implementations.PosterRecyclerAdapter;
 import us.bridgeses.popularmovies.models.Poster;
 
 /**
- * Created by Tony on 8/19/2016.
+ * A simple factory class that returns an initialized PosterAdapter that is compatible with
+ * {@link RecyclerView}s
  */
 public class RecyclerAdapterFactory implements AdapterFactory {
     private Context context;
@@ -19,6 +22,6 @@ public class RecyclerAdapterFactory implements AdapterFactory {
     }
 
     public PosterAdapter getAdapter(List<Poster> posters) {
-        return new PosterRecyclerAdapter(context, posters);
+        return new PosterRecyclerAdapter(Picasso.with(context), posters);
     }
 }

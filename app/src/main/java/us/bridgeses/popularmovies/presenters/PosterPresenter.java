@@ -4,6 +4,7 @@ import us.bridgeses.popularmovies.adapters.AdapterFactory;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.persistence.MovieLoader;
+import us.bridgeses.popularmovies.presenters.callbacks.PosterPresenterCallback;
 
 /**
  * Created by tbrid on 8/29/2016.

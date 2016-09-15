@@ -1,9 +1,9 @@
 package us.bridgeses.popularmovies.adapters;
 
 /**
- * Created by Tony on 8/30/2016.
+ * A simple interface for View Adapters for displaying Trailers.
  */
 public interface TrailerAdapter {
 
-    void setCallback(RecyclerTrailerAdapter.TrailerClickCallback callback);
+    void setCallback(TrailerClickCallback callback);
 }

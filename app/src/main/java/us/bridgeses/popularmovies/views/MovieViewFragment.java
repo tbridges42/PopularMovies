@@ -16,7 +16,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ShareActionProvider;
 import android.widget.TextView;
@@ -27,7 +26,7 @@ import us.bridgeses.dateview.DateView;
 import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.adapters.TrailerAdapter;
 import us.bridgeses.popularmovies.models.MovieDetail;
-import us.bridgeses.popularmovies.presenters.DetailPresenterCallback;
+import us.bridgeses.popularmovies.presenters.callbacks.DetailPresenterCallback;
 
 /**
  * Created by tbrid on 8/30/2016.

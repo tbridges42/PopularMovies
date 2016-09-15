@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.presenters;
+package us.bridgeses.popularmovies.presenters.callbacks;
 
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.persistence.networking.ServiceCallback;

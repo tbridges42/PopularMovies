@@ -14,6 +14,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import us.bridgeses.popularmovies.persistence.implementations.DBHelper;
+
 /**
  * Created by Tony on 8/31/2016.
  */
@@ -76,7 +78,7 @@ public class MovieProvider extends ContentProvider implements MoviesContract {
             case SINGLE_TRAILER:
                 return TrailerEntry.SINGLE_TRAILER_TYPE;
             case MULTIPLE_TRAILERS:
-                return TrailerEntry.MUTLIPLE_TRAILERS_TYPE;
+                return TrailerEntry.MULTIPLE_TRAILERS_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -150,6 +152,7 @@ public class MovieProvider extends ContentProvider implements MoviesContract {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         Cursor result;
         initDb();
+        Log.d(TAG, "query: " + uri.toString());
         @ItemType int match = uriMatcher.match(uri);
         if (!isMultiple(match)) {
             selection = BaseColumns._ID + " = ?";

@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.presenters;
+package us.bridgeses.popularmovies.presenters.callbacks;
 
 import android.content.Intent;
 import android.widget.CheckBox;

@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.presenters;
+package us.bridgeses.popularmovies.presenters.implementations;
 
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,9 +19,13 @@ import us.bridgeses.popularmovies.adapters.AdapterFactory;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
 import us.bridgeses.popularmovies.adapters.PosterClickListener;
 import us.bridgeses.popularmovies.models.Poster;
+import us.bridgeses.popularmovies.persistence.FavoritesManager;
 import us.bridgeses.popularmovies.persistence.MovieLoader;
-import us.bridgeses.popularmovies.persistence.PosterLoaderCallback;
+import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.presenters.PosterPresenter;
+import us.bridgeses.popularmovies.presenters.callbacks.PosterPresenterCallback;
 
+import static us.bridgeses.popularmovies.models.Poster.FAVORITED_MODE;
 import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;
 import static us.bridgeses.popularmovies.models.Poster.TOP_RATED_MODE;
 
@@ -76,6 +80,9 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
                     break;
                 case TOP_RATED_MODE:
                     movieLoader.getPosters(this, TOP_RATED_MODE, page);
+                    break;
+                case FAVORITED_MODE:
+                    movieLoader.getPosters(this, FAVORITED_MODE, page);
                     break;
             }
         }
@@ -135,14 +142,15 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
 
     @Override
     public void onReturnPosters(List<Poster> posters) {
-        if (callback != null) {
-            if (posterAdapter == null) {
-                posterAdapter = adapterFactory.getAdapter(posters);
-                posterAdapter.setListener(this);
-                callback.setAdapter(posterAdapter);
-            }
-            else {
-                posterAdapter.addPosters(posters);
+        if (currSort != FAVORITED_MODE || page == 1) {
+            if (callback != null) {
+                if (posterAdapter == null) {
+                    posterAdapter = adapterFactory.getAdapter(posters);
+                    posterAdapter.setListener(this);
+                    callback.setAdapter(posterAdapter);
+                } else {
+                    posterAdapter.addPosters(posters);
+                }
             }
         }
     }
@@ -173,9 +181,9 @@ public class PosterPresenterFragment extends Fragment implements PosterLoaderCal
             currSort = newSort;
             if (movieLoader != null) {
                 page = 1;
-                movieLoader.getPosters(this, newSort, page);
+                refresh();
                 posterAdapter = null;
-                page = 0;
+                //page = 0;
             }
             else {
                 throw new IllegalStateException("No MovieLoader set");

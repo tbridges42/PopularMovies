@@ -46,4 +46,20 @@ public class MovieDetailActivity extends Activity implements FavoriteCallback {
         intent.putExtra("favorite", favorite);
         setResult(RESULT_OK, intent);
     }
+
+    @Override
+    public void onLocalFailure() {
+        Intent intent = new Intent();
+        intent.putExtra("error", "local");
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
+
+    @Override
+    public void onRemoteFailure() {
+        Intent intent = new Intent();
+        intent.putExtra("error", "remote");
+        setResult(RESULT_CANCELED, intent);
+        finish();
+    }
 }

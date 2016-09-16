@@ -50,7 +50,7 @@ public class TmdbMovieLoader implements MovieLoader {
     private UrlTrailerFetcher activeTrailerFetcher;
 
     public TmdbMovieLoader(ConnectivityManager connMgr, String apiKey) {
-        this(connMgr, apiKey, "es");
+        this(connMgr, apiKey, "en");
     }
 
     public TmdbMovieLoader(ConnectivityManager connMgr, String apiKey, String lang) {

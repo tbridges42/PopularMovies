@@ -130,12 +130,12 @@ public class DetailPresenterFragment extends Fragment implements DetailsLoaderCa
 
     @Override
     public void onLocalFailure() {
-
+        favoriteCallback.onLocalFailure();
     }
 
     @Override
     public void onRemoteFailure() {
-
+        favoriteCallback.onRemoteFailure();
     }
 
     @Override

@@ -15,6 +15,8 @@ import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import java.util.List;
+
 import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.adapters.implementations.EndlessScrollListener;
 import us.bridgeses.popularmovies.adapters.PosterAdapter;
@@ -31,6 +33,7 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
     private RecyclerView posterView;
     private PosterViewCallback callback;
     private RecyclerView.Adapter cachedAdapter;
+    private Spinner sortSpinner;
 
     public static PosterViewFragment getInstance(Activity activity, @IdRes int res,
                                                  PosterViewCallback callback) {
@@ -56,8 +59,8 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
         if (cachedAdapter != null) {
             posterView.setAdapter(cachedAdapter);
         }
-        Spinner spinner = (Spinner) view.findViewById(R.id.sort_mode);
-        spinner.setOnItemSelectedListener(this);
+        sortSpinner = (Spinner) view.findViewById(R.id.sort_mode);
+        sortSpinner.setOnItemSelectedListener(this);
         final ViewTreeObserver vto = view.getViewTreeObserver();
         vto.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -96,6 +99,10 @@ public class PosterViewFragment extends Fragment implements Spinner.OnItemSelect
         else {
             cachedAdapter = adapter;
         }
+    }
+
+    public void setSpinnerItem(int item) {
+        sortSpinner.setSelection(item);
     }
 
     public void updateFavorite(long id, boolean favorite) {

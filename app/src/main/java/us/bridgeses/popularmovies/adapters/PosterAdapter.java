@@ -32,5 +32,7 @@ public interface PosterAdapter {
      */
     Poster getPoster(int position);
 
+    void setSelected(int selected);
+
     void setFilter(Predicate<Poster> filter);
 }

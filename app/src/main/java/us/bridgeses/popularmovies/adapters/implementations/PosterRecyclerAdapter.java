@@ -27,6 +27,7 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
     private Picasso picasso;
     private PosterClickListener listener;
     private Predicate<Poster> filter;
+    private int selected = -1;
 
     /**
      * @param picasso: This adapter requires a Picasso instance to load images
@@ -68,6 +69,7 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
         picasso.load(poster.getImageUri())
                 .error(R.drawable.error)
                 .placeholder(R.drawable.loading).into(holder.imageView);
+        holder.frame.setSelected(position == selected);
     }
 
     @Override
@@ -94,7 +96,10 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
 
     @Override
     public Poster getPoster(int position) {
-        return posters.get(position);
+        if (posters.size() > position) {
+            return posters.get(position);
+        }
+        return null;
     }
 
     @Override
@@ -123,20 +128,31 @@ public class PosterRecyclerAdapter extends RecyclerView.Adapter<PosterRecyclerAd
         return 0;
     }
 
+    @Override
+    public void setSelected(int selected) {
+        int old = this.selected;
+        this.selected = selected;
+        notifyItemChanged(old);
+        notifyItemChanged(selected);
+    }
+
     class PosterHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
         ImageView starView;
+        View frame;
 
         public PosterHolder(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.poster_image);
+            frame = itemView;
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
                     if (listener != null) {
                         listener.onPosterClick(posters.get(position).getId());
+                        setSelected(position);
                     }
                 }
             });

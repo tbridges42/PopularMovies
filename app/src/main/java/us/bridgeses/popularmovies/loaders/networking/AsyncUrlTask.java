@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.networking;
+package us.bridgeses.popularmovies.loaders.networking;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;

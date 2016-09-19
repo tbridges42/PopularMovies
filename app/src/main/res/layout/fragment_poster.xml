@@ -16,6 +16,6 @@
         android:layout_height="match_parent"
         android:stretchMode="columnWidth"
         android:gravity="center"
-        tools:context="us.bridgeses.popularmovies.PosterActivity"
+        tools:context=".activities.PopularMoviesActivity"
         tools:listitem="@layout/item_poster"/>
 </LinearLayout>

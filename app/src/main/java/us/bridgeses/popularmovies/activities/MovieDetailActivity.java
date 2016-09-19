@@ -1,21 +1,13 @@
-package us.bridgeses.popularmovies;
+package us.bridgeses.popularmovies.activities;
 
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
-import us.bridgeses.popularmovies.persistence.implementations.FavoriteMovieLoader;
-import us.bridgeses.popularmovies.persistence.FavoritesManager;
-import us.bridgeses.popularmovies.persistence.PersistenceHelper;
-import us.bridgeses.popularmovies.persistence.networking.TmdbMovieLoader;
-import us.bridgeses.popularmovies.persistence.ImageSaver;
-import us.bridgeses.popularmovies.persistence.implementations.PersistenceHelperImpl;
+import us.bridgeses.popularmovies.R;
 import us.bridgeses.popularmovies.presenters.callbacks.FavoriteCallback;
 import us.bridgeses.popularmovies.presenters.implementations.DetailFragmentWrapper;
-import us.bridgeses.popularmovies.views.MovieViewFragment;
-import us.bridgeses.popularmovies.presenters.implementations.DetailPresenterFragment;
 
 /**
  * Created by Tony on 8/25/2016.

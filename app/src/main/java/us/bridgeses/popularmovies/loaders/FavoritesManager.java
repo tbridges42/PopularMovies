@@ -1,13 +1,10 @@
-package us.bridgeses.popularmovies.persistence;
-
-import android.os.Handler;
-import android.util.Log;
+package us.bridgeses.popularmovies.loaders;
 
 import java.util.Set;
 
-import us.bridgeses.popularmovies.persistence.callbacks.DetailsLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.TrailerLoaderCallback;
 
 /**
  * Created by Tony on 9/3/2016.

@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.loaders;
 
 import java.util.List;
 import java.util.Set;

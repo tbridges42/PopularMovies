@@ -1,6 +1,6 @@
 package us.bridgeses.popularmovies.presenters.callbacks;
 
-import us.bridgeses.popularmovies.persistence.networking.ServiceCallback;
+import us.bridgeses.popularmovies.loaders.networking.ServiceCallback;
 
 /**
  * Created by Tony on 9/5/2016.

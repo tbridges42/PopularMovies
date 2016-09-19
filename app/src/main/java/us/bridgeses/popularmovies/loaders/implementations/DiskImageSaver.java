@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.implementations;
+package us.bridgeses.popularmovies.loaders.implementations;
 
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import us.bridgeses.popularmovies.persistence.ImageSaver;
+import us.bridgeses.popularmovies.loaders.ImageSaver;
 
 /**
  * Created by Tony on 9/3/2016.

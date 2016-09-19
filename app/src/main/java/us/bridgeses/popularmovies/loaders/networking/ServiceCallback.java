@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.networking;
+package us.bridgeses.popularmovies.loaders.networking;
 
 /**
  * Created by Tony on 8/6/2016.

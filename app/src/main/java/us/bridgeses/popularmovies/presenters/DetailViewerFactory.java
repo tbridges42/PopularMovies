@@ -1,6 +1,6 @@
 package us.bridgeses.popularmovies.presenters;
 
-import us.bridgeses.popularmovies.DetailActivityWrapper;
+import us.bridgeses.popularmovies.activities.DetailActivityWrapper;
 import us.bridgeses.popularmovies.presenters.implementations.DetailFragmentWrapper;
 
 /**

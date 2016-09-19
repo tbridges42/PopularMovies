@@ -1,11 +1,11 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.loaders;
 
 import android.support.annotation.NonNull;
 
 import us.bridgeses.popularmovies.models.Poster;
-import us.bridgeses.popularmovies.persistence.callbacks.DetailsLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.TrailerLoaderCallback;
 
 /**
  * Created by Tony on 8/6/2016.

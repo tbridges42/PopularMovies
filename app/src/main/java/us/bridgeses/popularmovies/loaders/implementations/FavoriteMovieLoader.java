@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.implementations;
+package us.bridgeses.popularmovies.loaders.implementations;
 
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Set;
 
 import us.bridgeses.popularmovies.models.Poster;
-import us.bridgeses.popularmovies.persistence.FavoritesManager;
-import us.bridgeses.popularmovies.persistence.MovieLoader;
-import us.bridgeses.popularmovies.persistence.callbacks.DetailsLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.TrailerLoaderCallback;
-import us.bridgeses.popularmovies.persistence.networking.TmdbMovieLoader;
+import us.bridgeses.popularmovies.loaders.FavoritesManager;
+import us.bridgeses.popularmovies.loaders.MovieLoader;
+import us.bridgeses.popularmovies.loaders.callbacks.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.loaders.networking.TmdbMovieLoader;
 
 /**
  * Created by Tony on 9/5/2016.

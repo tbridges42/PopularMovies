@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.implementations;
+package us.bridgeses.popularmovies.loaders.implementations;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentResolver;
@@ -19,9 +19,9 @@ import java.util.Set;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.models.Trailer;
-import us.bridgeses.popularmovies.persistence.ImageSaver;
-import us.bridgeses.popularmovies.persistence.MoviesContract;
-import us.bridgeses.popularmovies.persistence.PersistenceHelper;
+import us.bridgeses.popularmovies.loaders.ImageSaver;
+import us.bridgeses.popularmovies.loaders.MoviesContract;
+import us.bridgeses.popularmovies.loaders.PersistenceHelper;
 
 /**
  * Created by Tony on 8/31/2016.

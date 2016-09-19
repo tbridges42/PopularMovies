@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence;
+package us.bridgeses.popularmovies.loaders;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import us.bridgeses.popularmovies.persistence.implementations.DBHelper;
+import us.bridgeses.popularmovies.loaders.implementations.DBHelper;
 
 /**
  * Created by Tony on 8/31/2016.

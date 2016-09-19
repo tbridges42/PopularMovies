@@ -3,6 +3,8 @@
     <string name="trailers">Trailers</string>
     <string name="share">Share</string>
     <string name="rating" translatable="false">%.1f/10</string>
+    <string name="no_network">Unable to connect to network, switching to Favorites</string>
+    <string name="server_error">There was a problem contacting the server. Please check for updates.</string>
     <string-array name="sort_modes">
         <item>Most Popular</item>
         <item>Highest Rated</item>

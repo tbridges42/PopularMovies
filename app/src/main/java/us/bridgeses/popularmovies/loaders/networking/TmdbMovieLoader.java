@@ -1,4 +1,4 @@
-package us.bridgeses.popularmovies.persistence.networking;
+package us.bridgeses.popularmovies.loaders.networking;
 
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -17,10 +17,10 @@ import java.util.List;
 import us.bridgeses.popularmovies.models.MovieDetail;
 import us.bridgeses.popularmovies.models.Poster;
 import us.bridgeses.popularmovies.models.Trailer;
-import us.bridgeses.popularmovies.persistence.callbacks.DetailsLoaderCallback;
-import us.bridgeses.popularmovies.persistence.MovieLoader;
-import us.bridgeses.popularmovies.persistence.callbacks.PosterLoaderCallback;
-import us.bridgeses.popularmovies.persistence.callbacks.TrailerLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.DetailsLoaderCallback;
+import us.bridgeses.popularmovies.loaders.MovieLoader;
+import us.bridgeses.popularmovies.loaders.callbacks.PosterLoaderCallback;
+import us.bridgeses.popularmovies.loaders.callbacks.TrailerLoaderCallback;
 
 import static us.bridgeses.popularmovies.models.Poster.FAVORITED_MODE;
 import static us.bridgeses.popularmovies.models.Poster.MOST_POPULAR_MODE;

@@ -1,10 +1,10 @@
-package us.bridgeses.popularmovies.persistence.implementations;
+package us.bridgeses.popularmovies.loaders.implementations;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import us.bridgeses.popularmovies.persistence.MoviesContract;
+import us.bridgeses.popularmovies.loaders.MoviesContract;
 
 /**
  * An implementatio of {@link SQLiteOpenHelper} that implements {@link MoviesContract}
